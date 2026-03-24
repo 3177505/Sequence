@@ -1,0 +1,13 @@
+{
+  "name": "sequence-dual-screen",
+  "private": true,
+  "scripts": {
+    "dev": "serve . -l 3000",
+    "build:css": "sass scss/main.scss css/main.css",
+    "watch:css": "sass --watch scss/main.scss:css/main.css"
+  },
+  "devDependencies": {
+    "sass": "^1.77.0",
+    "serve": "^14.2.4"
+  }
+}

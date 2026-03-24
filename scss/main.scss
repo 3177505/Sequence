@@ -1,0 +1,66 @@
+@use 'vars' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: $bg-page;
+  color: $text-ui;
+  font-family: system-ui, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+.pane {
+  min-height: 0;
+  border: 1px solid $border-ui;
+}
+
+.controls {
+  padding: 12px 16px;
+  border-top: 1px solid $border-ui;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: $btn-bg;
+  color: $text-ui;
+  border: 1px solid $border-ui;
+  padding: 10px 18px;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $btn-hover;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.status {
+  font-size: 14px;
+  opacity: 0.85;
+}

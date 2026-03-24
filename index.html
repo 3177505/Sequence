@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sequence — dual screen prototype</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="app">
+    <div class="grid">
+      <div id="pane-left" class="pane" role="img" aria-label="Screen A sequence"></div>
+      <div id="pane-right" class="pane" role="img" aria-label="Screen B sequence"></div>
+    </div>
+    <div class="controls">
+      <button type="button" id="trigger">Trigger (15s alternate sequence)</button>
+      <span id="status" class="status"></span>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

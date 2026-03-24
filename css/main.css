@@ -1,0 +1,64 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #111;
+  color: #e8e8e8;
+  font-family: system-ui, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0;
+}
+
+.pane {
+  min-height: 0;
+  border: 1px solid #333;
+}
+
+.controls {
+  padding: 12px 16px;
+  border-top: 1px solid #333;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: #2a2a2a;
+  color: #e8e8e8;
+  border: 1px solid #333;
+  padding: 10px 18px;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover:not(:disabled) {
+  background: #3a3a3a;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/*# sourceMappingURL=main.css.map */
