@@ -19,6 +19,7 @@ function shuffle(arr) {
 const leftPane = document.getElementById('pane-left');
 const rightPane = document.getElementById('pane-right');
 const triggerBtn = document.getElementById('trigger');
+const serialConnectBtn = document.getElementById('serial-connect');
 const statusEl = document.getElementById('status');
 
 let seqLeft = shuffle(folder1);
@@ -97,6 +98,50 @@ function startTrigger() {
 triggerBtn.addEventListener('click', () => {
   if (inTrigger) return;
   startTrigger();
+});
+
+const SERIAL_BAUD = 115200;
+let serialPort = null;
+
+async function readSerialLines(port) {
+  const reader = port.readable.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i).trim();
+        buf = buf.slice(i + 1);
+        if (line.length > 0 && !inTrigger) startTrigger();
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+serialConnectBtn?.addEventListener('click', async () => {
+  if (!('serial' in navigator)) {
+    statusEl.textContent = 'Web Serial needs Chromium. Use http://localhost or HTTPS.';
+    return;
+  }
+  if (serialPort) {
+    statusEl.textContent = 'Serial already open — reload page to reconnect.';
+    return;
+  }
+  try {
+    serialPort = await navigator.serial.requestPort();
+    await serialPort.open({ baudRate: SERIAL_BAUD });
+    statusEl.textContent = 'Serial open — fire trigger from Nano.';
+    readSerialLines(serialPort);
+  } catch (e) {
+    serialPort = null;
+    if (e?.name !== 'NotFoundError') statusEl.textContent = String(e.message || e);
+  }
 });
 
 startBaseline();
