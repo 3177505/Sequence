@@ -1,0 +1,256 @@
+{
+  "_lastUpdated": "2026-03-30T17:04:25.607Z",
+  "_meta": {
+    "wantPerSub": 10,
+    "pageSize": 100,
+    "wrappers": [
+      "datamoshing",
+      "ObscureMedia"
+    ],
+    "playback": "redditVideoUrl = Reddit-hosted MP4 (video element); youtubeEmbedUrl = iframe embed"
+  },
+  "datamoshing": [
+    {
+      "id": "1rv6h7e",
+      "title": "WW3.mkv",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1rv6h7e/ww3mkv/",
+      "created_utc": 1773659280,
+      "subreddit": "datamoshing",
+      "is_video": false,
+      "post_hint": null,
+      "sourceUrl": "https://youtube.com/shorts/pn8lrD8JZ7w",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/pn8lrD8JZ7w"
+    },
+    {
+      "id": "1rofred",
+      "title": "Pretty pleased with how this one turned out",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1rofred/pretty_pleased_with_how_this_one_turned_out/",
+      "created_utc": 1773002277,
+      "subreddit": "datamoshing",
+      "is_video": false,
+      "post_hint": null,
+      "sourceUrl": "https://youtu.be/8fuIWjLVU18?si=HvhIMpyV1Rg2DHKo",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/8fuIWjLVU18"
+    },
+    {
+      "id": "1rgqq20",
+      "title": "Some P frame duplication and i frame deletion I did in avidemux!",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1rgqq20/some_p_frame_duplication_and_i_frame_deletion_i/",
+      "created_utc": 1772246057,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/w7w1ximdd5mg1",
+      "redditVideoUrl": "https://v.redd.it/w7w1ximdd5mg1/CMAF_480.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    },
+    {
+      "id": "1ref34o",
+      "title": "First time using data moshing for a horror vid!",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1ref34o/first_time_using_data_moshing_for_a_horror_vid/",
+      "created_utc": 1772030637,
+      "subreddit": "datamoshing",
+      "is_video": false,
+      "post_hint": null,
+      "sourceUrl": "https://www.youtube.com/watch?v=YTq3W9bhlFQ",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/YTq3W9bhlFQ"
+    },
+    {
+      "id": "1redy2o",
+      "title": "Snow",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1redy2o/snow/",
+      "created_utc": 1772027963,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/fr32tl2xcnlg1",
+      "redditVideoUrl": "https://v.redd.it/fr32tl2xcnlg1/CMAF_1080.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    },
+    {
+      "id": "1r6vd4b",
+      "title": "Safe Passage",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1r6vd4b/safe_passage/",
+      "created_utc": 1771299639,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/y8d2qm2q6zjg1",
+      "redditVideoUrl": "https://v.redd.it/y8d2qm2q6zjg1/CMAF_1080.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    },
+    {
+      "id": "1r6q6ix",
+      "title": "Just a quick one.",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1r6q6ix/just_a_quick_one/",
+      "created_utc": 1771285855,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/cywdghy72yjg1",
+      "redditVideoUrl": "https://v.redd.it/cywdghy72yjg1/CMAF_1080.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    },
+    {
+      "id": "1r2dl53",
+      "title": "fearofmakingout lyric video",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1r2dl53/fearofmakingout_lyric_video/",
+      "created_utc": 1770853244,
+      "subreddit": "datamoshing",
+      "is_video": false,
+      "post_hint": null,
+      "sourceUrl": "https://youtu.be/OOK85TANJHA?si=ZmXHTNVifMXYw6-3",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/OOK85TANJHA"
+    },
+    {
+      "id": "1r2c8x2",
+      "title": "Going for a walk",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1r2c8x2/going_for_a_walk/",
+      "created_utc": 1770849964,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/o63921232yig1",
+      "redditVideoUrl": "https://v.redd.it/o63921232yig1/CMAF_480.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    },
+    {
+      "id": "1r146ml",
+      "title": "waves",
+      "permalink": "https://www.reddit.com/r/datamoshing/comments/1r146ml/waves/",
+      "created_utc": 1770738194,
+      "subreddit": "datamoshing",
+      "is_video": true,
+      "post_hint": null,
+      "sourceUrl": "https://v.redd.it/cfr2okvptoig1",
+      "redditVideoUrl": "https://v.redd.it/cfr2okvptoig1/CMAF_1080.mp4?source=fallback",
+      "youtubeEmbedUrl": null
+    }
+  ],
+  "ObscureMedia": [
+    {
+      "id": "1s7ru70",
+      "title": "Arseny Avraamov - Symphony Of Factory Sirens (1922)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s7ru70/arseny_avraamov_symphony_of_factory_sirens_1922/",
+      "created_utc": 1774880210,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/Kq_7w9RHvpQ?is=wk-skUiJVzi0ewgg",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/Kq_7w9RHvpQ"
+    },
+    {
+      "id": "1s7jw58",
+      "title": "Bob Dylan Victoria’s Secret Ad (2004)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s7jw58/bob_dylan_victorias_secret_ad_2004/",
+      "created_utc": 1774855903,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/3MpuLPUMS70?is=1NjpkNvGNXSnzT_2",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/3MpuLPUMS70"
+    },
+    {
+      "id": "1s7dft4",
+      "title": "Hoping to find higher quality versions of this Animal Planet LatAm Bumper Comp. (2002)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s7dft4/hoping_to_find_higher_quality_versions_of_this/",
+      "created_utc": 1774835005,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://www.youtube.com/watch?v=9r22B3BlxmA",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/9r22B3BlxmA"
+    },
+    {
+      "id": "1s71vq1",
+      "title": "Commercial for the now defunct Dunkin' Donuts division of Japan (1980)s",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s71vq1/commercial_for_the_now_defunct_dunkin_donuts/",
+      "created_utc": 1774806731,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://www.youtube.com/watch?v=SRlRfUzDzUM",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/SRlRfUzDzUM"
+    },
+    {
+      "id": "1s71sar",
+      "title": "Sissitaitoja Kesällä - Guerrilla Skills in the Summer (1960)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s71sar/sissitaitoja_kesällä_guerrilla_skills_in_the/",
+      "created_utc": 1774806525,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/lId8dyd-tec",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/lId8dyd-tec"
+    },
+    {
+      "id": "1s713bn",
+      "title": "Fern - Spirit (2003)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s713bn/fern_spirit_2003/",
+      "created_utc": 1774804936,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/Vx9Hia44pcI?si=xBYrlKWxj-Dy97e0",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/Vx9Hia44pcI"
+    },
+    {
+      "id": "1s6ytyb",
+      "title": "JOHN DOE (2002) Original Unaired Pilot Episode w/ Meat Loaf",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s6ytyb/john_doe_2002_original_unaired_pilot_episode_w/",
+      "created_utc": 1774799787,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/z8DFHUtxNeI",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/z8DFHUtxNeI"
+    },
+    {
+      "id": "1s6lw01",
+      "title": "Playboy's Roller Disco &amp; Pajama Party TV Special (1979)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s6lw01/playboys_roller_disco_pajama_party_tv_special_1979/",
+      "created_utc": 1774759420,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/7NMZxIouKhU?si=zgR8C0sXukL5FWy7",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/7NMZxIouKhU"
+    },
+    {
+      "id": "1s6d0yi",
+      "title": "Low Down Da Sinista - Coming For Your Soul (1996)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s6d0yi/low_down_da_sinista_coming_for_your_soul_1996/",
+      "created_utc": 1774734440,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/cj_PHQEWI60?si=wYvBT6CgT9XwB1xl",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/cj_PHQEWI60"
+    },
+    {
+      "id": "1s6cq8v",
+      "title": "Big Joe Krash (Krs-One) - Break The Chain - A collaboration between rapper KRS One and Marvel Comics short lived music project involving popular musicians of the time (1994)",
+      "permalink": "https://www.reddit.com/r/ObscureMedia/comments/1s6cq8v/big_joe_krash_krsone_break_the_chain_a/",
+      "created_utc": 1774733707,
+      "subreddit": "ObscureMedia",
+      "is_video": false,
+      "post_hint": "rich:video",
+      "sourceUrl": "https://youtu.be/313sTt02SyE?si=zU7XFF3p4AYhlDYA",
+      "redditVideoUrl": null,
+      "youtubeEmbedUrl": "https://www.youtube.com/embed/313sTt02SyE"
+    }
+  ]
+}

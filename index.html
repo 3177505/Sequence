@@ -1,23 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
+  <base href="/">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sequence — dual screen prototype</title>
-  <link rel="stylesheet" href="css/main.css">
+  <title>Sequence — prototyp dvou obrazovek</title>
+  <link rel="stylesheet" href="assets/scss/main.scss">
+  <link rel="stylesheet" href="assets/scss/site-nav.scss">
 </head>
-<body>
-  <div class="app">
-    <div class="grid">
-      <div id="pane-left" class="pane" role="img" aria-label="Screen A sequence"></div>
-      <div id="pane-right" class="pane" role="img" aria-label="Screen B sequence"></div>
-    </div>
-    <div class="controls">
-      <button type="button" id="trigger">Trigger (15s alternate sequence)</button>
-      <button type="button" id="serial-connect">Připojit senzor (USB serial)</button>
-      <span id="status" class="status"></span>
-    </div>
-  </div>
-  <script src="js/app.js"></script>
+<body data-template="templates/index.html" data-scripts="assets/js/app.js">
+  <div id="site-nav-host"></div>
+  <div id="page-root"></div>
+  <div id="site-footer"></div>
+  <script type="module" src="assets/js/site-layout.js"></script>
+  <script src="assets/js/dev-livereload.js"></script>
 </body>
 </html>

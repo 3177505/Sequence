@@ -8,17 +8,15 @@ Dual-screen kiosk prototype: one page, two columns. Each column plays its own ra
 
 ```bash
 npm install
-npm run build:css
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). SCSS edits: `npm run watch:css` in another terminal.
+Open [http://localhost:3000](http://localhost:3000). HTML links to `assets/scss/*.scss`; the dev server compiles SCSS to CSS on each request (live reload on SCSS saves).
 
 | Script | Purpose |
 |--------|---------|
-| `npm run dev` | Static server on port 3000 |
-| `npm run build:css` | Compile `scss/main.scss` → `css/main.css` |
-| `npm run watch:css` | Watch and rebuild CSS |
+| `npm run dev` | Dev server on port 3000, on-the-fly SCSS |
+| `npm run dev:serve` | Plain static server (`serve`) — use `npm run dev` if you need SCSS |
 
 ---
 
@@ -26,10 +24,9 @@ Open [http://localhost:3000](http://localhost:3000). SCSS edits: `npm run watch:
 
 ```
 index.html
-js/app.js          # sequences, trigger timing (see constants at top)
-scss/_vars.scss    # colors / UI tokens
-scss/main.scss
-css/main.css       # generated — run build:css after SCSS changes
+assets/js/app.js
+assets/scss/_vars.scss
+assets/scss/main.scss   # linked directly; no checked-in compiled CSS
 ```
 
 ---

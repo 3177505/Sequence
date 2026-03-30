@@ -1,0 +1,17 @@
+<div id="app" class="app app--baseline">
+  <div class="grid">
+    <div id="pane-left" class="pane pane--reddit" aria-label="Reddit videa — obrazovka A">
+      <video id="video-left" class="pane__media" muted playsinline loop referrerpolicy="strict-origin-when-cross-origin"></video>
+      <iframe id="iframe-left" class="pane__media pane__media--frame" title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div id="pane-right" class="pane pane--reddit" aria-label="Reddit videa — obrazovka B">
+      <video id="video-right" class="pane__media" muted playsinline loop referrerpolicy="strict-origin-when-cross-origin"></video>
+      <iframe id="iframe-right" class="pane__media pane__media--frame" title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+  </div>
+  <div class="controls">
+    <button type="button" id="trigger">Spustit (15 s alternativní sekvence)</button>
+    <button type="button" id="serial-connect">Připojit senzor (USB serial)</button>
+    <span id="status" class="status"></span>
+  </div>
+</div>
