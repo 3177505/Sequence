@@ -1,35 +1,142 @@
-const states = [
+const TOPOLOGIES = [
   {
     lines: ['top-edge', 'bottom-edge', 'left-edge', 'right-edge', 'diag-main', 'diag-cross'],
     nodes: ['node-tl', 'node-tr', 'node-bl', 'node-br'],
-    labels: { tl: 'maskulinní', tr: 'femininní', bl: 'chlapské', br: 'ženskaté' },
-    outer: { top: 'hermafrodit', bottom: 'anděl', left: 'macho', right: 'vamp' },
   },
   {
     lines: ['top-edge', 'right-edge', 'diag-main'],
     nodes: ['node-tl', 'node-tr', 'node-br'],
-    labels: { tl: 'reálné', tr: 'ideální', bl: 'reziduální', br: 'ztvárněné' },
-    outer: { top: 'syntéza', bottom: 'čistá forma', left: 'syrové', right: 'spektákl' },
   },
   {
     lines: ['left-edge', 'bottom-edge', 'diag-cross'],
     nodes: ['node-tl', 'node-bl', 'node-br'],
-    labels: { tl: 'kodované', tr: 'promítané', bl: 'ztělesněné', br: 'maskované' },
-    outer: { top: 'signál', bottom: 'kostým', left: 'tíha', right: 'lesk' },
   },
   {
     lines: ['top-edge', 'bottom-edge', 'diag-main'],
     nodes: ['node-tl', 'node-tr', 'node-br', 'node-bl'],
-    labels: { tl: 'povrch', tr: 'zrcadlo', bl: 'stopa', br: 'avatar' },
-    outer: { top: 'rozhraní', bottom: 'hloubka', left: 'index', right: 'dvojník' },
   },
   {
     lines: ['left-edge', 'right-edge', 'diag-main', 'diag-cross'],
     nodes: ['node-tl', 'node-tr', 'node-bl', 'node-br'],
-    labels: { tl: 'původ', tr: 'simulace', bl: 'paměť', br: 'kopie' },
-    outer: { top: 'prototyp', bottom: 'replika', left: 'archiv', right: 'živě' },
   },
 ];
+
+const RESEARCH_KEYS = [
+  '4_Research/10_Absurd',
+  '4_Research/3_Carnivalesque',
+  '4_Research/13_Lunapark',
+  '4_Research/14_Carneval_PrevraceniRadu',
+  '4_Research/15_CarnivalOfCrisis',
+  '4_Research/21_ModernJester',
+  '4_Research/11_Trolling',
+  '4_Research/17_Manosphere',
+  '4_Research/2_Grotta',
+  '4_Research/4_Mannerist',
+  '4_Research/7_assemblage',
+  '4_Research/8_ Abjection',
+  '4_Research/12_Scapegoat',
+  '4_Research/19_Doadland',
+  '4_Research/9_Return',
+  '4_Research/1_Cyclical',
+  '4_Research/18_Sabotage',
+  '4_Research/5_AITendencies',
+  '4_Research/6_NeuralDecay',
+  '4_Research/22_LowResolution',
+  '4_Research/23_MacroMicro',
+];
+
+const researchDiagramWords = {
+  '4_Research/10_Absurd': {
+    labels: { tl: 'grotesk', tr: 'smích', bl: 'tělo', br: 'filtr' },
+    outer: { top: 'grotesknost', bottom: 'užitečné tělo', left: 'hranice hybridu', right: 'grotesk normální' },
+  },
+  '4_Research/3_Carnivalesque': {
+    labels: { tl: 'masopust', tr: 'memy', bl: 'tělo', br: 'Bachtin' },
+    outer: { top: 'zvrácení řádu', bottom: 'úřední morálka', left: 'liturgický rám', right: 'karneval bez náměstí' },
+  },
+  '4_Research/13_Lunapark': {
+    labels: { tl: 'atrakce', tr: 'kolotoč', bl: 'zábava', br: 'společenské tělo' },
+    outer: { top: 'předlunapark', bottom: 'slow living', left: 'adrenalin', right: 'IP parky' },
+  },
+  '4_Research/14_Carneval_PrevraceniRadu': {
+    labels: { tl: 'pravidlo zevnitř', tr: 'taktika', bl: 'králování bláznů', br: 'neposlušnost' },
+    outer: { top: 'předepsaná realita', bottom: 'operační logika', left: 'legální pořádek', right: 'hacktivismus' },
+  },
+  '4_Research/15_CarnivalOfCrisis': {
+    labels: { tl: 'smích', tr: 'hrůza', bl: 'hybrid', br: 'výkon' },
+    outer: { top: 'karneval krize', bottom: 'terapie', left: 'karneval za moru', right: 'utrpení jako spektákl' },
+  },
+  '4_Research/21_ModernJester': {
+    labels: { tl: 'šašek', tr: 'král', bl: 'nepříjemné', br: 'situace systému' },
+    outer: { top: 'hierarchie rozházené', bottom: 'profesionální řeč', left: 'dvorní šašek', right: 'stand-up' },
+  },
+  '4_Research/11_Trolling': {
+    labels: { tl: 'satira', tr: 'raid', bl: 'tržiště', br: 'shitpost' },
+    outer: { top: 'provokace z okraje', bottom: 'etika pozitivity', left: 'anonymita', right: 'Discord' },
+  },
+  '4_Research/17_Manosphere': {
+    labels: { tl: 'spolek', tr: 'incel', bl: 'systém', br: 'alfa řeč' },
+    outer: { top: 'manosphere', bottom: 'emancipace', left: 'mužské spolky', right: '4chan' },
+  },
+  '4_Research/2_Grotta': {
+    labels: { tl: 'URL', tr: 'IRL', bl: 'jeskyně', br: 'deep web' },
+    outer: { top: 'dark mode', bottom: 'flat design', left: 'jeskyně v zahradě', right: 'generované zátoky' },
+  },
+  '4_Research/4_Mannerist': {
+    labels: { tl: 'úzkost proporcí', tr: 'hyperdetail', bl: 'styl', br: 'zděděný vzorec' },
+    outer: { top: 'nadháněná forma', bottom: 'klasická harmonie', left: 'dvorská gesta', right: 'style transfer' },
+  },
+  '4_Research/7_assemblage': {
+    labels: { tl: 'fragment', tr: 'box', bl: 'Cornell', br: 'Kiefer' },
+    outer: { top: 'koláž', bottom: 'jedna forma', left: 'dada, surrealismus', right: 'scan sutin' },
+  },
+  '4_Research/8_ Abjection': {
+    labels: { tl: 'proklatý předmět', tr: 'hraniční', bl: 'deodand', br: 'cenzura záběru' },
+    outer: { top: 'vina na věci', bottom: 'trestní osoba', left: 'očištění předmětu', right: 'důkaz' },
+  },
+  '4_Research/12_Scapegoat': {
+    labels: { tl: 'cancel', tr: 'kampaň', bl: 'roh beránka', br: 'emblém' },
+    outer: { top: 'obětní beranek', bottom: 'presumpce neviny', left: 'oběť v komunitě', right: 'reputace' },
+  },
+  '4_Research/19_Doadland': {
+    labels: { tl: 'propad stroje', tr: 'koruna', bl: 'obec', br: 'common law' },
+    outer: { top: 'věc jako viník', bottom: 'osoba ne věc', left: 'zabavení věci', right: 'skrytá vina' },
+  },
+  '4_Research/9_Return': {
+    labels: { tl: 'zlatý věk', tr: 'singularita', bl: 'hodnoty', br: 'ideologie' },
+    outer: { top: 'narativní magnet', bottom: 'žádný happy end', left: 'mesianismus', right: 'retraditionalizace' },
+  },
+  '4_Research/18_Sabotage': {
+    labels: { tl: 'náhoda', tr: 'loop', bl: 'tichý odpor', br: 'špatná data' },
+    outer: { top: 'sabotáž obsahu', bottom: 'JIT korporát', left: 'fabrika', right: 'ransomware' },
+  },
+  '4_Research/5_AITendencies': {
+    labels: { tl: 'interpolace', tr: 'LLM', bl: 'tkalcovský vzor', br: 'diffusion' },
+    outer: { top: 'styl stroje', bottom: 'autorství', left: 'programové umění', right: 'syntetický hlas' },
+  },
+  '4_Research/6_NeuralDecay': {
+    labels: { tl: 'glitch', tr: 'latent space', bl: 'šum', br: 'komprese' },
+    outer: { top: 'decay jako výraz', bottom: 'HDR jako norma', left: 'filmová degradace', right: 'chyba jako podpis' },
+  },
+  '4_Research/1_Cyclical': {
+    labels: { tl: 'kalendář', tr: 'feed', bl: 'masopust', br: 'pinball' },
+    outer: { top: 'pinball bez katarze', bottom: 'pokrok jako přímka', left: 'cyklický čas', right: 'sezónní obsah' },
+  },
+  '4_Research/22_LowResolution': {
+    labels: { tl: 'VHS', tr: 'TikTok', bl: 'trezor', br: 'pirátství' },
+    outer: { top: 'chudý obraz', bottom: '8K status', left: 'široké šíření', right: 'přecompress' },
+  },
+  '4_Research/23_MacroMicro': {
+    labels: { tl: 'eroze', tr: 'dilatace', bl: 'mikroskop', br: 'veduta' },
+    outer: { top: 'jiná měřítka', bottom: 'jedna pravda', left: 'stejný materiál', right: 'street view' },
+  },
+};
+
+const states = RESEARCH_KEYS.map((key, i) => ({
+  ...TOPOLOGIES[i % 5],
+  labels: researchDiagramWords[key].labels,
+  outer: researchDiagramWords[key].outer,
+}));
 
 const lineIds = ['top-edge', 'bottom-edge', 'left-edge', 'right-edge', 'diag-main', 'diag-cross'];
 const nodeIds = ['node-tl', 'node-tr', 'node-bl', 'node-br'];
@@ -79,7 +186,7 @@ function nextState() {
 
 function startAuto() {
   stopAuto();
-  intervalId = setInterval(nextState, 2200);
+  intervalId = setInterval(nextState, 5200);
 }
 
 function stopAuto() {
@@ -106,13 +213,6 @@ nextStateButton.addEventListener('click', () => {
 applyState(currentState);
 startAuto();
 
-function researchAnchorId(label) {
-  return label
-    .split('/')
-    .map((p) => p.trim().replace(/\s+/g, '-'))
-    .join('-');
-}
-
 function loadGlossary() {
   const dl = document.getElementById('glossary-root');
   if (!dl) return;
@@ -128,13 +228,6 @@ function loadGlossary() {
         dt.textContent = e.term || '';
         const dd = document.createElement('dd');
         dd.textContent = e.definition || '';
-        if (e.research) {
-          dd.appendChild(document.createTextNode(' '));
-          const a = document.createElement('a');
-          a.href = `research.html#${researchAnchorId(e.research)}`;
-          a.textContent = '→ výzkum';
-          dd.appendChild(a);
-        }
         dl.appendChild(dt);
         dl.appendChild(dd);
       }

@@ -39,30 +39,103 @@ function noteBlockRedundantWithLabel(label, block) {
 
 function appendNoteBlocks(container, label, body) {
   if (!body) return;
-  const h = document.createElement('p');
+  const sec = document.createElement('section');
+  sec.className = 'research-gallery__section';
+  const h = document.createElement('h2');
+  h.className = 'research-gallery__title';
   h.textContent = label;
-  container.appendChild(h);
+  sec.appendChild(h);
   for (const block of String(body).split(/\n\n+/)) {
     const t = block.trim();
     if (!t) continue;
     if (noteBlockRedundantWithLabel(label, t)) continue;
     const p = document.createElement('p');
     p.textContent = t;
-    container.appendChild(p);
+    sec.appendChild(p);
   }
+  container.appendChild(sec);
+}
+
+const THUMB_STEP_VH = 41;
+let zDrag = 100;
+
+function attachPieceDrag(el, openUrl) {
+  let tx = 0;
+  let ty = 0;
+  let ptrId = null;
+  let startX = 0;
+  let startY = 0;
+  let startTx = 0;
+  let startTy = 0;
+  let moved = false;
+
+  function applyTransform() {
+    el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+  }
+
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    ptrId = e.pointerId;
+    el.setPointerCapture(ptrId);
+    startX = e.clientX;
+    startY = e.clientY;
+    startTx = tx;
+    startTy = ty;
+    moved = false;
+    el.style.zIndex = String(++zDrag);
+    el.style.cursor = 'grabbing';
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (ptrId === null || e.pointerId !== ptrId) return;
+    e.preventDefault();
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (dx * dx + dy * dy > 9) moved = true;
+    tx = startTx + dx;
+    ty = startTy + dy;
+    applyTransform();
+  });
+
+  function endPointer(e) {
+    if (ptrId === null || e.pointerId !== ptrId) return;
+    const shouldOpen = !moved;
+    ptrId = null;
+    try {
+      el.releasePointerCapture(e.pointerId);
+    } catch (_) {}
+    el.style.cursor = 'grab';
+    el.style.removeProperty('z-index');
+    if (shouldOpen) {
+      window.open(openUrl, '_blank', 'noopener,noreferrer');
+    }
+    moved = false;
+  }
+
+  el.addEventListener('pointerup', endPointer);
+  el.addEventListener('pointercancel', endPointer);
+
+  applyTransform();
 }
 
 function layoutCloud(container, urls, meta) {
   container.replaceChildren();
+
+  const notesWrap = document.createElement('div');
+  notesWrap.className = 'browse-cloud__notes';
   if (meta?.note) {
-    appendNoteBlocks(container, '3_Material', meta.note);
   }
   if (meta?.notes?.pinball) {
-    appendNoteBlocks(container, '2_Pinball', meta.notes.pinball);
+    appendNoteBlocks(notesWrap, 'Pinball', meta.notes.pinball);
   }
   if (meta?.notes?.inspo) {
-    appendNoteBlocks(container, '1_Inspo', meta.notes.inspo);
+    appendNoteBlocks(notesWrap, 'Inspo', meta.notes.inspo);
   }
+  if (notesWrap.childElementCount) {
+    container.appendChild(notesWrap);
+  }
+
   if (!urls.length) {
     container.classList.add('browse-cloud--empty');
     const empty = document.createElement('p');
@@ -70,31 +143,41 @@ function layoutCloud(container, urls, meta) {
     container.appendChild(empty);
     return;
   }
+
   container.classList.remove('browse-cloud--empty');
-  for (const url of urls) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.className = 'browse-cloud__piece';
-    const left = 4 + Math.random() * 72;
-    const top = 4 + Math.random() * 68;
-    const w = 11 + Math.random() * 17;
-    const rot = -10 + Math.random() * 20;
-    const z = 1 + Math.floor(Math.random() * 80);
-    a.style.left = `${left}%`;
-    a.style.top = `${top}%`;
-    a.style.width = `${w}%`;
-    a.style.zIndex = String(z);
-    a.style.transform = `rotate(${rot}deg)`;
+
+  const stage = document.createElement('div');
+  stage.className = 'browse-cloud__stage';
+  const n = urls.length;
+  const stageMinVh = 24 + n * THUMB_STEP_VH;
+  stage.style.minHeight = `${stageMinVh}vh`;
+
+  for (let i = 0; i < n; i++) {
+    const url = urls[i];
+    const piece = document.createElement('div');
+    piece.className = 'browse-cloud__piece';
+    piece.tabIndex = 0;
+    const topVh = i * THUMB_STEP_VH;
+    const leftPct = 6 + Math.random() * 52;
+    piece.style.left = `${leftPct}%`;
+    piece.style.top = `${topVh}vh`;
     const img = document.createElement('img');
     img.src = url;
     img.alt = '';
     img.loading = 'lazy';
     img.className = 'browse-cloud__img';
-    a.appendChild(img);
-    container.appendChild(a);
+    img.draggable = false;
+    piece.appendChild(img);
+    piece.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    });
+    attachPieceDrag(piece, url);
+    stage.appendChild(piece);
   }
+
+  container.appendChild(stage);
 }
 
 try {

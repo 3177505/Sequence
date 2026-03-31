@@ -19,7 +19,8 @@ body:has(.research-gallery) {
   color: $text-ui;
 }
 
-.research-gallery--empty {
+.research-gallery__empty-msg {
+  margin: 0 0 16px;
   color: $text-muted;
   font-size: 14px;
 }

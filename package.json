@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
     "build:public-tree": "node scripts/generate-public-tree-json.mjs",
+    "build:public-tree:watch": "node --watch scripts/generate-public-tree-json.mjs",
     "dev:serve": "node scripts/generate-public-tree-json.mjs && serve . -l 3000",
     "scrape:reddit-videos": "node scripts/scrape-reddit-videos.mjs"
   },

@@ -341,21 +341,16 @@ export const researchLabelMeta = {
   },
 };
 
-export const materialCloudNote = [
-  'Materiál na výstavě, co je výplň.',
-  'Sklo, vitríny, textury.'
-].join('\n\n');
-
 export const inspirationCloudNotes = {
   pinball: [
     'Pinball ... žádné spasení, jen opakování.',
     'Sweet spot, napětí.',
-    'Skluzavky.',
+    'Skluzavky jako symbol loopu hedonismu.',
   ].join('\n\n'),
   inspo: [
     'Inspo mimo projekt.',
-    'Okamžik než se význam překlopí.',
-    'Kancelářský grotesk ... absurdita všedního pracovního rituálu.',
+    'Prazdny okamžik než se význam zmeni.',
+    'Kancelářský grotesk ... absurdita pracovního rituálu.',
   ].join('\n\n'),
 };
 
@@ -363,67 +358,57 @@ export const semioticGlossary = [
   {
     term: 'Karneval (Bachtin)',
     definition:
-      'Chaos hierarchie na chvíli legálně ... smích a tělo vs úřad.',
-    research: '4_Research/3_Carnivalesque',
+      'Dočasné zvrácení řádu: smích a tělo proti úřední morálce; karneval jako schválené okno chaosu, ne jen bezpečná zábava.',
   },
   {
     term: 'Převrácení řádu',
     definition:
-      'Pravidla zevnitř ... šašek a král, ne čistá anarchie.',
-    research: '4_Research/14_Carneval_PrevraceniRadu',
+      'Porušování pravidel zevnitř předepsané reality; převrácení jako taktika, ne čistá anarchie. Protipól: legální pořádek jako jediný přípustný rám.',
   },
   {
     term: 'Grotesknost',
     definition:
-      'Hybrid, rozbitá hranice těla a společnosti.',
-    research: '4_Research/10_Absurd',
+      'Grotesk a hybrid na hranici těla a instituce; smích, galerie, výkon. Protipól: užitečné tělo a produktivita jako norma.',
   },
   {
     term: 'Abjekce',
     definition:
-      'Co tělo zahání ... hlen, krev ... čisté já.',
-    research: '4_Research/8_ Abjection',
+      'Proklatý předmět na hranici čistoty; morální síla a vina přenesená na věc či obraz. Protipól: právo trestá osoby, ne předměty.',
   },
   {
     term: 'Obětní kozel',
     definition:
-      'Vina přesunutá na jednoho ... ritualizace.',
-    research: '4_Research/12_Scapegoat',
+      'Vina soustředěná na jednoho; cancel, reputace a ritualizované vyloučení. Protipól: presumpce neviny a férový proces.',
   },
   {
     term: 'Deodand',
     definition:
-      'Věc propadá státu protože zabila ... předmoderní právo.',
-    research: '4_Research/19_Doadland',
+      'Věc propadá koruně nebo obci, protože „způsobila“ smrt; předmoderní právo. Protipól: zodpovědnost osob, ne strojů ani algoritmů.',
   },
   {
     term: 'Chudý obraz',
     definition:
-      'Rozplizlý soubor ... špatná kvalita ale rychle letí, Steyerl.',
-    research: '4_Research/22_LowResolution',
+      'Nízké rozlišení a široké šíření; degradace jako únik z trezoru kinematografie a patentní čistoty (Steyerl). Protipól: 8K HDR jako status.',
   },
   {
     term: 'Cyklus / smyčka',
     definition:
-      'Čas bez cíle dopředu ... algoritmus, replay.',
-    research: '4_Research/1_Cyclical',
+      'Opakující se rituál proti lineárnímu pokroku; feed a replay bez katarze. Protipól: čas jako přímka a „překonání“ minulosti.',
   },
   {
     term: 'Makro × mikro',
     definition:
-      'Stejný znak ... celé plátno vs pixel.',
-    research: '4_Research/23_MacroMicro',
+      'Stejný materiál, jiná měřítka významu; dilatace a eroze pixelu, zoom versus celé plátno. Protipól: jediné správné rozlišení.',
   },
   {
     term: 'Spása (narativ)',
     definition:
-      'Happy end ideologie ... technologie, národ, víra.',
-    research: '4_Research/9_Return',
+      'Návrat ke zlatému věku, technologické nebo národní vykoupení; ideologie uzavírá hodnoty do příběhu o spáse. Protipól: pluralismus bez jednoho happy endu.',
   },
   {
     term: 'Heterarchie pojmů',
     definition:
-      'Na diagramu žádný střed nahoře ... význam v síti hran.',
+      'Žádný jediný střed diagramu; význam drží síť aktivních hran a uzlů, ne pyramida s jednou pravdou nahoře.',
   },
 ];
 
