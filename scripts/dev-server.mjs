@@ -10,6 +10,12 @@ import {
   filePathToEncodedUrl,
   IMAGE_EXT,
 } from './lib/public-tree.mjs';
+import { buildResearchGalleryPayload } from './lib/research-gallery.mjs';
+import { buildGlossaryPayload } from './lib/sequence-notes.mjs';
+import {
+  buildInspirationCloudPayload,
+  buildMaterialCloudPayload,
+} from './lib/browse-cloud-payload.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -181,23 +187,102 @@ async function handle(req, res) {
     return;
   }
 
-  if (urlPath === '/api/public-tree/research' && req.method === 'GET') {
+  if (
+    (urlPath === '/api/research-gallery' ||
+      urlPath === '/public/api-public-tree/research-gallery.json') &&
+    req.method === 'GET'
+  ) {
+    try {
+      const body = JSON.stringify(await buildResearchGalleryPayload(rootResolved));
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (
+    urlPath === '/public/api-public-tree/glossary.json' &&
+    req.method === 'GET'
+  ) {
+    try {
+      const body = JSON.stringify(buildGlossaryPayload());
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (
+    (urlPath === '/api/public-tree/research' ||
+      urlPath === '/public/api-public-tree/research.json') &&
+    req.method === 'GET'
+  ) {
     await publicTreeJsonHandler(path.join(rootResolved, 'public', 'research'))(req, res);
     return;
   }
 
-  if (urlPath === '/api/public-tree/material' && req.method === 'GET') {
-    await publicTreeJsonHandler(path.join(rootResolved, 'public', 'material'))(req, res);
+  if (
+    (urlPath === '/api/public-tree/material' ||
+      urlPath === '/public/api-public-tree/material.json') &&
+    req.method === 'GET'
+  ) {
+    await publicTreeJsonHandler(path.join(rootResolved, 'public', '3_Material'))(req, res);
     return;
   }
 
-  if (urlPath === '/api/public-tree/inspiration' && req.method === 'GET') {
+  if (urlPath === '/public/api-public-tree/inspiration-cloud.json' && req.method === 'GET') {
     try {
-      const pinbaRoot = path.join(rootResolved, 'public', 'pinba');
-      const inspoRoot = path.join(rootResolved, 'public', 'inspo');
+      const body = JSON.stringify(await buildInspirationCloudPayload(rootResolved));
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (urlPath === '/public/api-public-tree/material-cloud.json' && req.method === 'GET') {
+    try {
+      const body = JSON.stringify(await buildMaterialCloudPayload(rootResolved));
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (
+    (urlPath === '/api/public-tree/inspiration' ||
+      urlPath === '/public/api-public-tree/inspiration.json') &&
+    req.method === 'GET'
+  ) {
+    try {
+      const pinRoot = path.join(rootResolved, 'public', '2_Pinball');
+      const inspoRoot = path.join(rootResolved, 'public', '1_Inspo');
       const sources = [
-        { key: 'pinba', label: 'Pinba', node: await buildPublicFolderTree(rootResolved, pinbaRoot) },
-        { key: 'inspo', label: 'Inspo', node: await buildPublicFolderTree(rootResolved, inspoRoot) },
+        { key: '2_Pinball', label: 'Pinball', node: await buildPublicFolderTree(rootResolved, pinRoot) },
+        { key: '1_Inspo', label: 'Inspo', node: await buildPublicFolderTree(rootResolved, inspoRoot) },
       ];
       const body = JSON.stringify({ sources });
       res.writeHead(200, {

@@ -1,0 +1,46 @@
+@use 'vars' as *;
+
+body:has(.browse-cloud) {
+  margin: 0;
+  min-height: 100vh;
+  background: $bg-page;
+}
+
+.browse-cloud {
+  position: relative;
+  box-sizing: border-box;
+  min-height: calc(100vh - 48px);
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.browse-cloud--empty {
+  padding: 24px 20px;
+  color: $text-muted;
+  font-size: 14px;
+}
+
+.browse-cloud__piece {
+  position: absolute;
+  display: block;
+  line-height: 0;
+  transform-origin: center center;
+  box-sizing: border-box;
+}
+
+.browse-cloud__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+  border: 1px solid $border-ui;
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  background: $bg-panel;
+}
+
+.browse-cloud__piece:focus-visible .browse-cloud__img {
+  outline: 2px solid $col-folder1-b;
+  outline-offset: 3px;
+}

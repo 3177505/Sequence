@@ -132,17 +132,21 @@
 
   function blendLikeProcessing(img0, img1, overlayImg, w, h, opts) {
     const legacy = opts == null || opts === undefined;
+    const useEarthyEdge = legacy ? true : opts.useEarthyEdge !== false;
     const maskThreshold = legacy ? 128 : opts.maskThreshold != null ? opts.maskThreshold : 128;
     const edgeGate = legacy ? 128 : opts.edgeGate != null ? opts.edgeGate : 128;
     const overlayGate = legacy ? 128 : opts.overlayGate != null ? opts.overlayGate : 128;
-    const blurR = legacy ? 8 : Math.max(1, Math.min(24, Math.round(opts.blurRadius != null ? opts.blurRadius : 8)));
+    const blurCap = useEarthyEdge ? 24 : 40;
+    const blurR = legacy
+      ? 8
+      : Math.max(1, Math.min(blurCap, Math.round(opts.blurRadius != null ? opts.blurRadius : 8)));
     const earthyMix = legacy ? 0.5 : Math.max(0, Math.min(1, opts.earthyMix != null ? opts.earthyMix : 0.5));
 
     const pix0 = readRgbaFromDrawable(img0, w, h);
     const pix1 = readRgbaFromDrawable(img1, w, h);
     const pixO = readRgbaFromDrawable(overlayImg, w, h);
     const blurred1 = boxBlurRgbaClone(pix1, w, h, blurR);
-    const edgeMono = createEdgeMaskMono(pixO, w, h, maskThreshold);
+    const edgeMono = useEarthyEdge ? createEdgeMaskMono(pixO, w, h, maskThreshold) : null;
     const n = w * h;
     const out = new Uint8ClampedArray(n * 4);
     for (let pi = 0; pi < n; pi++) {
@@ -159,12 +163,12 @@
       const rO = pixO[i];
       const gO = pixO[i + 1];
       const bO = pixO[i + 2];
-      const edgeBrt = edgeMono[pi];
+      const edgeBrt = useEarthyEdge ? edgeMono[pi] : 0;
       const overlayBrt = processingBrightness(rO, gO, bO);
       let rr;
       let gg;
       let bb;
-      if (edgeBrt > edgeGate) {
+      if (useEarthyEdge && edgeBrt > edgeGate) {
         const gradientFactor = legacy
           ? 0.4 + Math.random() * 0.4
           : Math.max(0, Math.min(1, opts.edgeGradientFactor != null ? opts.edgeGradientFactor : 0.6));

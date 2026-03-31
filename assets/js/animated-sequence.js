@@ -2,7 +2,33 @@ const SLIDE_MS = 2500;
 const TRIGGER_SLIDE_MS = 400;
 const TRIGGER_MS = 15000;
 const RESEARCH_API = '/api/research-images';
-const ANIM_PHASE_PER_FRAME = 5;
+
+const CYCLE_MS_L = 15100;
+const CYCLE_MS_R = 13100;
+const PHASE_OFFSET_MS_R = 31000;
+const RAMP_MAIN_END = 0.58;
+const BEYOND_GAIN = 0.62;
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function fract01(x) {
+  return x - Math.floor(x);
+}
+
+function monotoneStretch(u) {
+  if (u <= RAMP_MAIN_END) return u / RAMP_MAIN_END;
+  const tail = (u - RAMP_MAIN_END) / (1 - RAMP_MAIN_END);
+  return 1 + tail * BEYOND_GAIN;
+}
+
+function sidePhase01(nowMs, side, lagMs) {
+  const lag = lagMs != null ? lagMs : 0;
+  const cycle = side === 'L' ? CYCLE_MS_L : CYCLE_MS_R;
+  const off = side === 'L' ? 0 : PHASE_OFFSET_MS_R;
+  return fract01((nowMs + off + lag) / cycle);
+}
 
 let paneL = null;
 let paneR = null;
@@ -31,22 +57,6 @@ function clamp(v, a, b) {
   return Math.max(a, Math.min(b, v));
 }
 
-function sn(x) {
-  return 0.5 + 0.5 * Math.sin(x);
-}
-
-function blendParamsFromPhase(s) {
-  return {
-    maskThreshold: clamp(Math.round(95 + 55 * sn(s * 0.54)), 70, 210),
-    edgeGate: clamp(Math.round(88 + 62 * sn(s * 0.68 + 0.8)), 45, 225),
-    overlayGate: clamp(Math.round(102 + 48 * sn(s * 0.61 + 2.1)), 70, 200),
-    blurRadius: clamp(3 + 9 * sn(s * 0.36 + 0.2), 1, 22),
-    earthyMix: clamp(0.32 + 0.36 * sn(s * 0.6 + 0.4), 0.18, 0.82),
-    edgeGradientFactor: clamp(0.36 + 0.42 * sn(s * 0.76 + 1.25), 0.12, 0.94),
-    earthIndex: Math.floor(5 * sn(s * 0.14)) % 5,
-  };
-}
-
 const ui = { trigger: null, serial: null, status: null };
 
 function captureUi() {
@@ -73,12 +83,38 @@ let displayCanvasR = null;
 let displayCtxR = null;
 let resizeScheduled = false;
 
-let animPhase = 0;
 let rafId = null;
 let cacheL = null;
 let cacheR = null;
 let cacheLoading = false;
 let triggerBusy = false;
+
+const paramRanges = {
+  overlayGate: [44, 212],
+  blurRadius: [9, 34],
+};
+
+function buildOpts(side, nowMs) {
+  const blurLag = side === 'L' ? 15000 : 22000;
+  const u = sidePhase01(nowMs, side, 0);
+  const uBlur = sidePhase01(nowMs, side, blurLag);
+  const k = monotoneStretch(u);
+  const kBlur = monotoneStretch(uBlur);
+  const norm = 1 + BEYOND_GAIN;
+  const kn = k / norm;
+  const knBlur = kBlur / norm;
+  const [gLo, gHi] = paramRanges.overlayGate;
+  const [bLo, bHi] = paramRanges.blurRadius;
+  const gSpan = gHi - gLo;
+  const bSpan = bHi - bLo;
+  const overlayGate = clamp(Math.round(lerp(gLo, gHi + gSpan * BEYOND_GAIN, kn)), 32, 252);
+  const blurRadius = clamp(lerp(bLo, bHi + bSpan * BEYOND_GAIN, knBlur), 4, 40);
+  return {
+    useEarthyEdge: false,
+    overlayGate,
+    blurRadius,
+  };
+}
 
 function pickTriplet() {
   const union = useLeft.concat(useRight);
@@ -183,14 +219,16 @@ function drawAnimatedStep() {
   if (!bc || !displayCtxL || !displayCtxR || !cacheL || !cacheR || cacheLoading) return;
   const { w, h } = paneDims();
   if (w < 32 || h < 32) return;
-  animPhase += ANIM_PHASE_PER_FRAME;
-  const pL = blendParamsFromPhase(animPhase);
-  const pR = blendParamsFromPhase(animPhase + 2.2);
+  const now = performance.now();
+
   displayCanvasL.width = w;
   displayCanvasL.height = h;
   displayCanvasR.width = w;
   displayCanvasR.height = h;
+
   try {
+    const pL = buildOpts('L', now);
+    const pR = buildOpts('R', now);
     const outL = bc.blendLikeProcessing(cacheL[0], cacheL[1], cacheL[2], w, h, pL);
     const outR = bc.blendLikeProcessing(cacheR[0], cacheR[1], cacheR[2], w, h, pR);
     if (outL?.width && outR?.width) {
@@ -252,10 +290,7 @@ function startBaseline() {
   useLeft = shuffle(poolBaselineL);
   useRight = shuffle(poolBaselineR);
   if (ui.trigger) ui.trigger.disabled = !poolsReady();
-  if (ui.status)
-    ui.status.textContent = poolsReady()
-      ? 'Animace prahu masky, bran a rozostření — pomalé vlny (~10–20 s). Spouštěč: statický blend bez animace parametrů.'
-      : 'Stejné fondy jako Prototyp blend — npm run dev.';
+  if (ui.status) ui.status.textContent = poolsReady() ? '' : 'npm run dev • stejné fondy jako Prototyp blend';
   if (poolsReady()) {
     imageTickId = window.setInterval(refreshImageCache, SLIDE_MS);
     refreshImageCache();
@@ -264,7 +299,7 @@ function startBaseline() {
 }
 
 function updateTriggerStatus(remainingSec) {
-  if (ui.status) ui.status.textContent = `Spouštěč (zbývá ${remainingSec} s) — statický blend bez animace parametrů.`;
+  if (ui.status) ui.status.textContent = `Spouštěč ${remainingSec} s`;
 }
 
 function startTrigger() {

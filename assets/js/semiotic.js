@@ -105,3 +105,41 @@ nextStateButton.addEventListener('click', () => {
 
 applyState(currentState);
 startAuto();
+
+function researchAnchorId(label) {
+  return label
+    .split('/')
+    .map((p) => p.trim().replace(/\s+/g, '-'))
+    .join('-');
+}
+
+function loadGlossary() {
+  const dl = document.getElementById('glossary-root');
+  if (!dl) return;
+  fetch('/public/api-public-tree/glossary.json', { cache: 'no-store' })
+    .then((r) => {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    })
+    .then((data) => {
+      const entries = data.entries || [];
+      for (const e of entries) {
+        const dt = document.createElement('dt');
+        dt.textContent = e.term || '';
+        const dd = document.createElement('dd');
+        dd.textContent = e.definition || '';
+        if (e.research) {
+          dd.appendChild(document.createTextNode(' '));
+          const a = document.createElement('a');
+          a.href = `research.html#${researchAnchorId(e.research)}`;
+          a.textContent = '→ výzkum';
+          dd.appendChild(a);
+        }
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+      }
+    })
+    .catch(() => {});
+}
+
+loadGlossary();
