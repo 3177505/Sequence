@@ -1,11 +1,11 @@
-const SLIDE_MS = 2500;
+const SLIDE_MS = 5800;
 const TRIGGER_SLIDE_MS = 400;
 const TRIGGER_MS = 15000;
 const RESEARCH_API = '/api/research-images';
 
-const CYCLE_MS_L = 15100;
-const CYCLE_MS_R = 13100;
-const PHASE_OFFSET_MS_R = 31000;
+const CYCLE_MS_L = 34000;
+const CYCLE_MS_R = 29500;
+const PHASE_OFFSET_MS_R = 70000;
 const RAMP_MAIN_END = 0.58;
 const BEYOND_GAIN = 0.62;
 
@@ -15,6 +15,10 @@ function lerp(a, b, t) {
 
 function fract01(x) {
   return x - Math.floor(x);
+}
+
+function tri01(u) {
+  return u < 0.5 ? u * 2 : 2 - u * 2;
 }
 
 function monotoneStretch(u) {
@@ -95,23 +99,35 @@ const paramRanges = {
 };
 
 function buildOpts(side, nowMs) {
-  const blurLag = side === 'L' ? 15000 : 22000;
+  const blurLag = side === 'L' ? 33500 : 49500;
+  const cyc = side === 'L' ? CYCLE_MS_L : CYCLE_MS_R;
   const u = sidePhase01(nowMs, side, 0);
   const uBlur = sidePhase01(nowMs, side, blurLag);
-  const k = monotoneStretch(u);
   const kBlur = monotoneStretch(uBlur);
   const norm = 1 + BEYOND_GAIN;
-  const kn = k / norm;
   const knBlur = kBlur / norm;
   const [gLo, gHi] = paramRanges.overlayGate;
   const [bLo, bHi] = paramRanges.blurRadius;
   const gSpan = gHi - gLo;
   const bSpan = bHi - bLo;
-  const overlayGate = clamp(Math.round(lerp(gLo, gHi + gSpan * BEYOND_GAIN, kn)), 32, 252);
+  const overlayHi = gHi + gSpan * BEYOND_GAIN;
+  let overlayGate = clamp(lerp(gLo, overlayHi, u), 32, 252);
+  const offE = side === 'L' ? 0 : PHASE_OFFSET_MS_R * 0.29;
+  const uExpand = fract01(nowMs / (cyc * 0.72) + offE);
+  const overlayFeather = lerp(14, 118, tri01(uExpand));
+  const offI = side === 'L' ? 0.11 : 0.56;
+  const uInvert = fract01(nowMs / (cyc * 1.08) + offI + (side === 'R' ? PHASE_OFFSET_MS_R / (cyc * 4) : 0));
+  const overlayInvert = tri01(uInvert);
+  const offB = side === 'L' ? 0 : PHASE_OFFSET_MS_R * 0.07;
+  const uBreathe = fract01(nowMs / (cyc * 1.35) + offB);
+  const gateNudge = lerp(-22, 22, tri01(uBreathe));
+  overlayGate = clamp(overlayGate + gateNudge, 32, 252);
   const blurRadius = clamp(lerp(bLo, bHi + bSpan * BEYOND_GAIN, knBlur), 4, 40);
   return {
     useEarthyEdge: false,
     overlayGate,
+    overlayFeather,
+    overlayInvert,
     blurRadius,
   };
 }
@@ -232,8 +248,8 @@ function drawAnimatedStep() {
     const outL = bc.blendLikeProcessing(cacheL[0], cacheL[1], cacheL[2], w, h, pL);
     const outR = bc.blendLikeProcessing(cacheR[0], cacheR[1], cacheR[2], w, h, pR);
     if (outL?.width && outR?.width) {
-      displayCtxL.drawImage(outL, 0, 0);
-      displayCtxR.drawImage(outR, 0, 0);
+      displayCtxL.drawImage(outL, 0, 0, w, h);
+      displayCtxR.drawImage(outR, 0, 0, w, h);
     }
   } catch (e) {
     if (ui.status) ui.status.textContent = String(e?.message || e);
@@ -263,13 +279,16 @@ async function runTriggerFrame() {
         throw new Error('Obrázek se nepodařilo načíst (zkontrolujte URL).');
       }
     }
-    const outL = bc.blendLikeProcessing(imgsL[0], imgsL[1], imgsL[2], w, h);
-    const outR = bc.blendLikeProcessing(imgsR[0], imgsR[1], imgsR[2], w, h);
+    const nowT = performance.now();
+    const pL = buildOpts('L', nowT);
+    const pR = buildOpts('R', nowT);
+    const outL = bc.blendLikeProcessing(imgsL[0], imgsL[1], imgsL[2], w, h, pL);
+    const outR = bc.blendLikeProcessing(imgsR[0], imgsR[1], imgsR[2], w, h, pR);
     if (!outL?.width || !outR?.width) {
       throw new Error('Výstup blendu je prázdný.');
     }
-    displayCtxL.drawImage(outL, 0, 0);
-    displayCtxR.drawImage(outR, 0, 0);
+    displayCtxL.drawImage(outL, 0, 0, w, h);
+    displayCtxR.drawImage(outR, 0, 0, w, h);
   } catch (e) {
     if (ui.status) ui.status.textContent = String(e?.message || e);
   } finally {

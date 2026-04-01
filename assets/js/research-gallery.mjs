@@ -157,6 +157,44 @@ const efluxReadingGroups = [
   },
 ];
 
+function appendResearchIntro(container, payload) {
+  const block = payload?.intro;
+  if (!block || typeof block !== 'object') return;
+  const sec = document.createElement('section');
+  sec.className = 'research-gallery__section';
+  sec.id = 'research-intro';
+  const title = String(block.title ?? '').trim();
+  if (title) {
+    const h2 = document.createElement('h2');
+    h2.className = 'research-gallery__title';
+    h2.textContent = title;
+    sec.appendChild(h2);
+  }
+  const rows = Array.isArray(block.rows) ? block.rows : [];
+  if (rows.length) {
+    const table = document.createElement('table');
+    table.className = 'research-intro-table';
+    const tbody = document.createElement('tbody');
+    for (const raw of rows) {
+      const text = String(raw ?? '');
+      if (!text.trim()) continue;
+      const tr = document.createElement('tr');
+      const tdMark = document.createElement('td');
+      tdMark.className = 'research-intro-table__mark';
+      tdMark.textContent = '*';
+      const tdText = document.createElement('td');
+      tdText.className = 'research-intro-table__text';
+      tdText.textContent = text;
+      tr.appendChild(tdMark);
+      tr.appendChild(tdText);
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    sec.appendChild(table);
+  }
+  if (sec.childNodes.length) container.appendChild(sec);
+}
+
 function appendEfluxReadingList(container) {
   const sec = document.createElement('section');
   sec.className = 'research-gallery__section';
@@ -190,6 +228,7 @@ function appendEfluxReadingList(container) {
 function render(data) {
   root.replaceChildren();
   root.classList.add('research-gallery');
+  appendResearchIntro(root, data);
   const list = data.groups || [];
   if (!list.length) {
     const p = document.createElement('p');

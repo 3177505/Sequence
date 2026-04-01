@@ -2,6 +2,7 @@ import path from 'path';
 import fsp from 'fs/promises';
 import { filePathToEncodedUrl, IMAGE_EXT } from './public-tree.mjs';
 import {
+  researchGalleryIntro,
   researchGalleryLabelOrder,
   researchLabelMeta,
 } from './sequence-notes.mjs';
@@ -120,5 +121,5 @@ export async function buildResearchGalleryPayload(repoRoot) {
     }));
   }
   groups.sort(compareResearchGroupLabels);
-  return { groups };
+  return { intro: researchGalleryIntro, groups };
 }

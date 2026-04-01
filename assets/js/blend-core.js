@@ -135,7 +135,17 @@
     const useEarthyEdge = legacy ? true : opts.useEarthyEdge !== false;
     const maskThreshold = legacy ? 128 : opts.maskThreshold != null ? opts.maskThreshold : 128;
     const edgeGate = legacy ? 128 : opts.edgeGate != null ? opts.edgeGate : 128;
-    const overlayGate = legacy ? 128 : opts.overlayGate != null ? opts.overlayGate : 128;
+    const overlayGate = legacy ? 128 : opts.overlayGate != null ? Number(opts.overlayGate) : 128;
+    const overlayFeather = legacy
+      ? 0
+      : opts.overlayFeather != null
+        ? Math.max(0, Math.min(255, Number(opts.overlayFeather)))
+        : 0;
+    const overlayInvert = legacy
+      ? 0
+      : opts.overlayInvert != null
+        ? Math.max(0, Math.min(1, Number(opts.overlayInvert)))
+        : 0;
     const blurCap = useEarthyEdge ? 24 : 40;
     const blurR = legacy
       ? 8
@@ -179,16 +189,31 @@
         rr = (earth[0] + (mid[0] - earth[0]) * earthyMix) | 0;
         gg = (earth[1] + (mid[1] - earth[1]) * earthyMix) | 0;
         bb = (earth[2] + (mid[2] - earth[2]) * earthyMix) | 0;
-      } else if (overlayBrt > overlayGate) {
-        rr = r0;
-        gg = g0;
-        bb = b0;
       } else {
         const gradientFactor = processingBrightness(r0, g0, b0) / 255;
         const t = lerpColorRgb(r1, g1, b1, br1, bg1, bb1, gradientFactor);
-        rr = t[0];
-        gg = t[1];
-        bb = t[2];
+        let wThru;
+        if (overlayFeather <= 0) {
+          wThru = overlayBrt > overlayGate ? 1 : 0;
+        } else {
+          const half = overlayFeather * 0.5;
+          const lo = overlayGate - half;
+          const hi = overlayGate + half;
+          const span = hi - lo;
+          if (span <= 0) {
+            wThru = overlayBrt > overlayGate ? 1 : 0;
+          } else {
+            wThru = (overlayBrt - lo) / span;
+            if (wThru < 0) wThru = 0;
+            if (wThru > 1) wThru = 1;
+          }
+        }
+        if (overlayInvert > 0) {
+          wThru = wThru + (1 - 2 * wThru) * overlayInvert;
+        }
+        rr = (t[0] + (r0 - t[0]) * wThru) | 0;
+        gg = (t[1] + (g0 - t[1]) * wThru) | 0;
+        bb = (t[2] + (b0 - t[2]) * wThru) | 0;
       }
       out[i] = rr;
       out[i + 1] = gg;

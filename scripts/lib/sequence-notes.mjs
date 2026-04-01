@@ -24,6 +24,22 @@ export const researchGalleryLabelOrder = [
   '4_Research/23_MacroMicro',
 ];
 
+export const researchGalleryIntro = {
+  title: 'In points',
+  rows: [
+    'opakující se logika převrácení řádu, viny a spásy v digitální době  význam a čas nejsou lineární "feed", ale cyklický a přepisovatelný narative',
+    'seskupené jevy, fenomény co pracují s řády co ovládají společnost, současné téma ja tematizovat jakým způsobem media proměnují chování celeho lidsva',
+    'nejak na to nahlizet z sirsiho hlediska,… macro micro ',
+    'mapa překlápějících se významů, nelineární příběh..  dvojice historie ↔ současnost, protipóly a krátké teze',
+    'karneval a převrácení řádu, groteskno a absurditu, obětní kozla / vinu přenesenou na věc (deodand, cancel), návraty a narativ spásy, trolling a moderní šašek, krizi jako karneval, sabotáž a smyčky, nízké rozlišení / "chudý obraz", makro versus mikro v digitálním materiálu, AI a manýrismus\u2026.',
+    'morálka a moc přepisují přes tělo, věc, obraz nebo algoritmus',
+    'pozorování evoluce… typ jevu (karneval, vina, spasení, degradace obrazu) mění semédii a dobou -> rozpoznatelná logik',
+    'cyklus / smyčka vs lineární čas; feed, pinball bez katarze ',
+    'párování historické / současné osy, k grottě jako URL vs IRL,..',
+    'krizi jako karnevalu, narativech spásy a "great again", ale i do ztvárnění u moderního šaška ',
+  ],
+};
+
 export const researchLabelMeta = {
   '4_Research/1_Cyclical': {
     note: [
@@ -59,12 +75,12 @@ export const researchLabelMeta = {
   },
   '4_Research/3_Carnivalesque': {
     note:
-      'Dočasné zvrácení řádu, Dočasné, smích ... Bachtin, karneval.',
-    protipol: 'Úřední morálka ... karneval jen jako bezpečná zábava.',
+      'Dočasné zvrácení řádu, výměna krále za šaška ... Bachtin.',
+    protipol: 'Úřední morálka ... bezpečná zábava.',
     casovaOsa: [
       {
-        historical: 'Masopusty s liturgickým rámem.',
-        contemporary: 'Memy, cancel, stream ... karneval bez náměstí.',
+        historical: 'Masopusty.. liturgie.',
+        contemporary: 'Memy, cancel, stream ... subculture URL/IRL.',
       },
     ],
   },
@@ -188,7 +204,7 @@ export const researchLabelMeta = {
   },
   '4_Research/13_Lunapark': {
     note: 'Mýtus předlunaparku ... zábava jako zrcadlo společenského těla.',
-    protipol: 'Slow living, kritika adrenalinu.',
+    protipol: 'Kritika dopamine.. addiction.',
     casovaOsa: [
       {
         historical: 'Výstavy, panoptika 19. stol.',
@@ -198,9 +214,9 @@ export const researchLabelMeta = {
   },
   '4_Research/14_Carneval_PrevraceniRadu': {
     note:
-      'Porušování pravidel ... operační logika uvnitř předepsané reality. Převrácení pořádku karnevalu jako taktika, ne jen změť.',
+      'Porušování pravidel ... operační logika uvnitř předepsané reality.',
     protipol:
-      'Legální pořádek a bezpečnostní aparát ... libovolné převrácení sankcionované jako riziko.',
+      'Legální pořádek ...',
     casovaOsa: [
       {
         historical: 'Králování bláznů v masopustu.',
@@ -213,11 +229,10 @@ export const researchLabelMeta = {
       'Karneval krize ... smích a hrůza současně.',
       '„Skutečná hodnota“ ... troubení, katharsis, polidštění… hybrid výkonu.',
     ].join('\n\n'),
-    protipol: 'Terapeutická kultura ... žádný toxický humor.',
     casovaOsa: [
       {
         historical: 'Karneval za moru.',
-        contemporary: 'Válka na sítích, memy, utrpení jako spektákl.',
+        contemporary: 'Převleky na protestech proti vládě.',
       },
     ],
   },
@@ -227,7 +242,6 @@ export const researchLabelMeta = {
       'Jev, kdy dospělí jedinci drží larvální či mladistvé rysy; neotenie.',
       'Pedomorfní úpravy ... estetika „ne dospělosti“.',
     ].join('\n\n'),
-    protipol: 'Zralé tělo občana jako norma.',
     casovaOsa: [
       {
         historical: 'Baby-face v reklamě.',
@@ -239,7 +253,7 @@ export const researchLabelMeta = {
     note:
       'Kritika a protipól k internetové subkultuře manosphere.',
     protipol:
-      'MRAs říkají obrana ... rozlišit systém vs misogynie.',
+      '...obrana ... rozlišit systém vs misogynie.',
     casovaOsa: [
       {
         historical: 'Mužské spolky vs emancipace.',
@@ -254,19 +268,19 @@ export const researchLabelMeta = {
       'Sabotovat obsah.',
       'Loops.'
     ].join('\n\n'),
-    protipol: 'Korporát ... nezpomalovat, JIT.',
+    protipol: 'Korporát ... nebo ne.',
     casovaOsa: [
       {
         historical: 'Fabriky, tichý odpor.',
-        contemporary: 'Quiet quitting, špatná data, ransomware.',
+        contemporary: 'Quiet quitting (hustle culture by doing only the required duties), ransomware.',
       },
     ],
   },
   '4_Research/19_Doadland': {
     note:
-      'Deodand ... věc, která „způsobila“ smrt a bývá zabavena ve prospěch koruny / obce.',
+      'Deodand ... objekty, které způsobily smrt a byly zabavené ve prospěch státu.',
     protipol:
-      'Moderní právo zodpovědnosti osob, ne věcí ... deodand jako archaismus s příslovečným významem.',
+      'Moderní právo zodpovědnosti osob...',
     casovaOsa: [
       {
         historical: 'Common law, propad stroje.',
@@ -281,8 +295,8 @@ export const researchLabelMeta = {
       'Certifikace původu, blockchainové „proof“ a marketing čistoty ... proti narrative falše.',
     casovaOsa: [
       {
-        historical: 'Prave ceske..',
-        contemporary: 'Deepfake, syntetika jako příroda, greenwash.',
+        historical: 'Pravé české..',
+        contemporary: 'Deepfake, nafouknutá realita.',
       },
     ],
   },
@@ -340,6 +354,8 @@ export const researchLabelMeta = {
     ],
   },
 };
+
+export const materialCloudNote = '';
 
 export const inspirationCloudNotes = {
   pinball: [
