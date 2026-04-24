@@ -2,9 +2,11 @@ import path from 'path';
 import fsp from 'fs/promises';
 import { filePathToEncodedUrl, IMAGE_EXT } from './public-tree.mjs';
 import {
+  defaultResearchPairId,
   researchGalleryIntro,
   researchGalleryLabelOrder,
   researchLabelMeta,
+  researchPairPresets,
 } from './sequence-notes.mjs';
 
 export async function collectImagesRecursiveUnder(repoRoot, absDir) {
@@ -36,6 +38,43 @@ function compareResearchFolderNames(a, b) {
   const nb = mb ? parseInt(mb[1], 10) : Number.MAX_SAFE_INTEGER;
   if (na !== nb) return na - nb;
   return a.localeCompare(b, undefined, { sensitivity: 'base' });
+}
+
+function sectionIdFromLabel(label) {
+  return label
+    .split('/')
+    .map((p) => p.trim().replace(/\s+/g, '-'))
+    .join('-');
+}
+
+function formatFolderSlug(label) {
+  const last = (label.split('/').pop() || label).trim();
+  return last.replace(/^\d+_(.+)$/, '$1').trim();
+}
+
+function buildPairPreview() {
+  const id = process.env.SEQUENCE_RESEARCH_PAIR || defaultResearchPairId;
+  const preset = researchPairPresets.find((p) => p.id === id) || researchPairPresets[0];
+  if (!preset) return null;
+  const meta = researchLabelMeta;
+  const leftM = meta[preset.left];
+  const rightM = meta[preset.right];
+  return {
+    presetId: preset.id,
+    sectionTitle: 'Dvojice pro dvě plochy (prototyp)',
+    hint:
+      'Aktuální pár odpovídá tomu, co má prototyp (dvě plochy) brát z 4_Research, pokud nenastavíš vlastní soubory v public/research/baseline-left a baseline-right. Další dvojice a výchozí id: researchPairPresets a defaultResearchPairId v souboru scripts/lib/sequence-notes.mjs.',
+    left: {
+      label: preset.left,
+      displayTitle: String(leftM?.displayTitle ?? '').trim() || formatFolderSlug(preset.left),
+      sectionId: sectionIdFromLabel(preset.left),
+    },
+    right: {
+      label: preset.right,
+      displayTitle: String(rightM?.displayTitle ?? '').trim() || formatFolderSlug(preset.right),
+      sectionId: sectionIdFromLabel(preset.right),
+    },
+  };
 }
 
 function compareResearchGroupLabels(x, y) {
@@ -74,8 +113,9 @@ async function pushGroupsForParent(repoRoot, groups, parentAbs, segmentStart, sk
   for (const ent of dirs) {
     const absDir = path.join(parentAbs, ent.name);
     const images = await collectImagesRecursiveUnder(repoRoot, absDir);
-    if (!images.length) continue;
     const label = [...relParts, ent.name].join('/');
+    const hasMeta = Boolean(researchLabelMeta?.[label]);
+    if (!images.length && !hasMeta) continue;
     groups.push({
       label,
       relPath: `public/${label}`,
@@ -102,6 +142,8 @@ export async function buildResearchGalleryPayload(repoRoot) {
   for (const g of groups) {
     const meta = researchLabelMeta[g.label];
     if (!meta) continue;
+    const displayTitle = String(meta.displayTitle ?? '').trim();
+    if (displayTitle) g.displayTitle = displayTitle;
     const note = String(meta.note ?? '').trim();
     if (note) g.note = note;
     const bib = (meta.bibliografie ?? [])
@@ -121,5 +163,5 @@ export async function buildResearchGalleryPayload(repoRoot) {
     }));
   }
   groups.sort(compareResearchGroupLabels);
-  return { intro: researchGalleryIntro, groups };
+  return { intro: researchGalleryIntro, groups, pairPreview: buildPairPreview() };
 }

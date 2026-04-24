@@ -195,6 +195,41 @@ function appendResearchIntro(container, payload) {
   if (sec.childNodes.length) container.appendChild(sec);
 }
 
+function appendPairPreview(container, data) {
+  const pv = data?.pairPreview;
+  if (!pv || typeof pv !== 'object') return;
+  const sec = document.createElement('section');
+  sec.className = 'research-gallery__section';
+  sec.id = 'research-pair-preview';
+  const h2 = document.createElement('h2');
+  h2.className = 'research-gallery__title';
+  h2.textContent = String(pv.sectionTitle ?? '').trim() || 'Dvojice pro dvě plochy';
+  sec.appendChild(h2);
+  const hint = String(pv.hint ?? '').trim();
+  if (hint) {
+    const ph = document.createElement('p');
+    ph.textContent = hint;
+    sec.appendChild(ph);
+  }
+  const row = document.createElement('p');
+  const L = pv.left;
+  const R = pv.right;
+  if (L && R) {
+    const aL = document.createElement('a');
+    aL.href = `#${L.sectionId}`;
+    aL.textContent = L.displayTitle || L.label;
+    const mid = document.createTextNode(' · ');
+    const aR = document.createElement('a');
+    aR.href = `#${R.sectionId}`;
+    aR.textContent = R.displayTitle || R.label;
+    row.appendChild(aL);
+    row.appendChild(mid);
+    row.appendChild(aR);
+  }
+  sec.appendChild(row);
+  container.appendChild(sec);
+}
+
 function appendEfluxReadingList(container) {
   const sec = document.createElement('section');
   sec.className = 'research-gallery__section';
@@ -229,6 +264,7 @@ function render(data) {
   root.replaceChildren();
   root.classList.add('research-gallery');
   appendResearchIntro(root, data);
+  appendPairPreview(root, data);
   const list = data.groups || [];
   if (!list.length) {
     const p = document.createElement('p');
@@ -243,7 +279,7 @@ function render(data) {
       sec.id = sectionIdFromLabel(g.label);
       const h2 = document.createElement('h2');
       h2.className = 'research-gallery__title';
-      h2.textContent = formatGroupTitle(g.label);
+      h2.textContent = (g.displayTitle && String(g.displayTitle).trim()) || formatGroupTitle(g.label);
       sec.appendChild(h2);
       if (String(g.note ?? '').trim()) {
         for (const block of String(g.note).split(/\n\n+/)) {

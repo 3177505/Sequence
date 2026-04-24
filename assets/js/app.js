@@ -7,6 +7,12 @@ const folder2 = ['#9b59b6', '#1abc9c', '#e67e22', '#34495e'];
 const folderTriggerLeft = ['#ff6b6b', '#4ecdc4', '#ffe66d'];
 const folderTriggerRight = ['#a29bfe', '#fd79a8', '#00b894'];
 
+const WIPE_MS_BASELINE = 420;
+const WIPE_MS_TRIGGER = 220;
+
+const JITTER_MS_BASELINE = 380;
+const JITTER_MS_TRIGGER = 90;
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -26,20 +32,105 @@ let seqLeft = shuffle(folder1);
 let seqRight = shuffle(folder2);
 let idxLeft = 0;
 let idxRight = 0;
-let tickId = null;
+let tickLeftId = null;
+let tickRightId = null;
 let triggerEndId = null;
 let triggerRemainingId = null;
 let inTrigger = false;
 
-function applyPanes() {
-  leftPane.style.backgroundColor = seqLeft[idxLeft % seqLeft.length];
-  rightPane.style.backgroundColor = seqRight[idxRight % seqRight.length];
+function mountSlotLayers(pane) {
+  if (!pane) return null;
+  const a = document.createElement('div');
+  const b = document.createElement('div');
+  a.className = 'pane-layer';
+  b.className = 'pane-layer';
+  a.style.transform = 'translateY(0%)';
+  b.style.transform = 'translateY(100%)';
+  pane.replaceChildren(a, b);
+  return { pane, layers: [a, b], active: 0, anim: null };
 }
 
-function tick() {
-  idxLeft++;
-  idxRight++;
-  applyPanes();
+const slotL = mountSlotLayers(leftPane);
+const slotR = mountSlotLayers(rightPane);
+
+function slotSetInstant(slot, color) {
+  if (!slot) return;
+  const cur = slot.layers[slot.active];
+  const other = slot.layers[slot.active ^ 1];
+  if (slot.anim) slot.anim.cancel();
+  cur.style.backgroundColor = color;
+  cur.style.transform = 'translateY(0%)';
+  other.style.transform = 'translateY(100%)';
+}
+
+function slotWipeFromTop(slot, nextColor, durationMs) {
+  if (!slot) return;
+  const cur = slot.layers[slot.active];
+  const nxt = slot.layers[slot.active ^ 1];
+  if (slot.anim) slot.anim.cancel();
+
+  nxt.style.backgroundColor = nextColor;
+  cur.style.transform = 'translateY(0%)';
+  nxt.style.transform = 'translateY(-100%)';
+
+  const a = cur.animate(
+    [{ transform: 'translateY(0%)' }, { transform: 'translateY(100%)' }],
+    { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+  );
+  const b = nxt.animate(
+    [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0%)' }],
+    { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+  );
+
+  slot.anim = b;
+  b.onfinish = () => {
+    slot.active ^= 1;
+    slot.anim = null;
+    const off = slot.layers[slot.active ^ 1];
+    off.style.transform = 'translateY(100%)';
+  };
+  b.oncancel = () => {
+    slot.anim = null;
+  };
+}
+
+function applyPaneL(animate) {
+  const colL = seqLeft[idxLeft % seqLeft.length];
+  const dur = inTrigger ? WIPE_MS_TRIGGER : WIPE_MS_BASELINE;
+  if (!animate) slotSetInstant(slotL, colL);
+  else slotWipeFromTop(slotL, colL, dur);
+}
+
+function applyPaneR(animate) {
+  const colR = seqRight[idxRight % seqRight.length];
+  const dur = inTrigger ? WIPE_MS_TRIGGER : WIPE_MS_BASELINE;
+  if (!animate) slotSetInstant(slotR, colR);
+  else slotWipeFromTop(slotR, colR, dur);
+}
+
+function jitterMs() {
+  const span = inTrigger ? JITTER_MS_TRIGGER : JITTER_MS_BASELINE;
+  return (Math.random() * 2 - 1) * span;
+}
+
+function scheduleNextL() {
+  const base = inTrigger ? TRIGGER_SLIDE_MS : SLIDE_MS;
+  const ms = Math.max(30, Math.round(base + jitterMs()));
+  tickLeftId = window.setTimeout(() => {
+    idxLeft++;
+    applyPaneL(true);
+    scheduleNextL();
+  }, ms);
+}
+
+function scheduleNextR() {
+  const base = inTrigger ? TRIGGER_SLIDE_MS : SLIDE_MS;
+  const ms = Math.max(30, Math.round(base + jitterMs()));
+  tickRightId = window.setTimeout(() => {
+    idxRight++;
+    applyPaneR(true);
+    scheduleNextR();
+  }, ms);
 }
 
 function startBaseline() {
@@ -49,16 +140,22 @@ function startBaseline() {
   seqRight = shuffle(folder2);
   idxLeft = 0;
   idxRight = 0;
-  applyPanes();
+  applyPaneL(false);
+  applyPaneR(false);
   triggerBtn.disabled = false;
   statusEl.textContent = 'Základní režim: dva sloupce (složka 1 / složka 2).';
-  tickId = window.setInterval(tick, SLIDE_MS);
+  scheduleNextL();
+  scheduleNextR();
 }
 
 function stopTimers() {
-  if (tickId !== null) {
-    window.clearInterval(tickId);
-    tickId = null;
+  if (tickLeftId !== null) {
+    window.clearTimeout(tickLeftId);
+    tickLeftId = null;
+  }
+  if (tickRightId !== null) {
+    window.clearTimeout(tickRightId);
+    tickRightId = null;
   }
   if (triggerEndId !== null) {
     window.clearTimeout(triggerEndId);
@@ -82,14 +179,16 @@ function startTrigger() {
   seqRight = shuffle(folderTriggerRight);
   idxLeft = 0;
   idxRight = 0;
-  applyPanes();
+  applyPaneL(false);
+  applyPaneR(false);
   let remaining = Math.ceil(TRIGGER_MS / 1000);
   updateTriggerStatus(remaining);
   triggerRemainingId = window.setInterval(() => {
     remaining -= 1;
     if (remaining > 0) updateTriggerStatus(remaining);
   }, 1000);
-  tickId = window.setInterval(tick, TRIGGER_SLIDE_MS);
+  scheduleNextL();
+  scheduleNextR();
   triggerEndId = window.setTimeout(() => {
     startBaseline();
   }, TRIGGER_MS);

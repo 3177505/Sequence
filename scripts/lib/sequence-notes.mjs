@@ -22,7 +22,29 @@ export const researchGalleryLabelOrder = [
   '4_Research/6_NeuralDecay',
   '4_Research/22_LowResolution',
   '4_Research/23_MacroMicro',
+  '4_Research/24_LaughingStock',
+  '4_Research/25_Depese',
+  '4_Research/26_Lolcow',
+  '4_Research/27_PhotogrammetryRig',
+  '4_Research/28_MoralBankruptcy',
+  '4_Research/29_BakhtinianInversion',
+  '4_Research/30_SlotMachine',
+  '4_Research/31_Staccato',
+  '4_Research/32_StimmingToys',
+  '4_Research/33_Toys',
+  '4_Research/34_WheelOfFortune',
+  '4_Research/35_KuleshovEffect',
 ];
+
+export const researchPairPresets = [
+  {
+    id: 'scapegoat-lolcow',
+    left: '4_Research/12_Scapegoat',
+    right: '4_Research/26_Lolcow',
+  },
+];
+
+export const defaultResearchPairId = 'scapegoat-lolcow';
 
 export const researchGalleryIntro = {
   title: 'In points',
@@ -188,6 +210,7 @@ export const researchLabelMeta = {
     ],
   },
   '4_Research/12_Scapegoat': {
+    displayTitle: 'Obětní kozel — vina, cancel, přenesený terč',
     note: [
       'Cancel, obětní beranek.',
       'Deodand ... věc jako viník.',
@@ -225,6 +248,7 @@ export const researchLabelMeta = {
     ],
   },
   '4_Research/15_CarnivalOfCrisis': {
+    displayTitle: 'Karneval krize — masky, protest; smích a hrůza současně',
     note: [
       'Karneval krize ... smích a hrůza současně.',
       '„Skutečná hodnota“ ... troubení, katharsis, polidštění… hybrid výkonu.',
@@ -350,6 +374,107 @@ export const researchLabelMeta = {
       {
         historical: 'Mikroskop vs veduta.',
         contemporary: 'Zoom, satelit, street view, morfologie pixelů.',
+      },
+    ],
+  },
+  '4_Research/24_LaughingStock': {
+    note: [
+      'Laughing stock: veřejné ponížení jako zábava. Smích jako nástroj moci i obrany.',
+      'Fassbinder: „exploitability of feelings“ — emoce jako věc, kterou lze vytěžit (stát, vztah, publikum).',
+      'Karnevalický režim: dovoleno se smát, ale někdo musí nést roli oběti.',
+    ].join('\n\n'),
+    protipol: 'Důstojnost, soukromí, empatie bez publika.',
+    casovaOsa: [
+      {
+        historical: 'Pranýř, kabaret, freak show.',
+        contemporary: 'Lol content, reaction economy, veřejné shaming formáty.',
+      },
+    ],
+  },
+  '4_Research/25_Depese': {
+    note: [
+      'Deposed / sesazený: ztráta statusu jako narativní stroj. Převrácení hierarchie není osvobození, ale přesměrování moci.',
+      'Outsider jako optika společnosti: kdo je vyhozen, ukazuje pravidla uvnitř.',
+    ].join('\n\n'),
+    protipol: 'Stabilní legitimita, meritokratický mýtus bez pádu.',
+    casovaOsa: [
+      {
+        historical: 'Sesazení panovníka, revoluce, exil.',
+        contemporary: 'Deplatforming, reputační pád, “cancel” jako rituál.',
+      },
+    ],
+  },
+  '4_Research/26_Lolcow': {
+    displayTitle: 'Lolcow — veřejný terč; publikum se krmí konfliktem a smíchem',
+    note: [
+      'Lolcow: figurína pro kolektivní pobavení, která se „krmí“ pozorností a konfliktem.',
+      'Blízko scapegoat: vina a frustrace se přelévá do jedné osoby (nebo avataru).',
+      'Fassbinder: moc v intimních vztazích i v publiku — kontrola přes stud, lásku, výsměch.',
+      'Mechanika: publikum si bere „právo“ definovat normu tím, že ukazuje odchylku; oběť je držena při životě cyklem pozornosti.',
+      'Vazba na CarnivalOfCrisis: smích je současně ventil i trest; karneval přepíná na cruelty, když potřebuje oběť.',
+    ].join('\n\n'),
+    protipol: 'Solidarita s outsiderem, odmítnutí publika jako spoluúčasti.',
+    casovaOsa: [
+      {
+        historical: 'Dvorní terč, klaun jako hromosvod.',
+        contemporary: 'Streamers, parasocial hate, komentářové stáje.',
+      },
+    ],
+  },
+  '4_Research/27_PhotogrammetryRig': {
+    note: [
+      'Rig / zařízení na snímání těla nebo objektu: technika jako rituál důkazu.',
+      'Tělo (nebo věc) se stává datem. Indexicalita „tohle je pravda“ přes sken.',
+      'Makro/mikro: stejný objekt, jiná vrstva významu podle rozlišení a účelu.',
+      'Změna moci: kdo vlastní rig, vlastní perspektivu; normalizuje, co je „správný“ tvar, gesto, povrch.',
+      'Sken jako karneval bez masky: místo převleku je tu přesnost — ale i ta je estetická a politická (co se měří, co se ignoruje).',
+    ].join('\n\n'),
+    protipol: 'Improvizace, subjektivní kresba, paměť bez důkazu.',
+    casovaOsa: [
+      {
+        historical: 'Fotografie jako důkaz, měření, antropometrie.',
+        contemporary: 'Photogrammetry, NeRF, digitální dvojče, forenzní estetika.',
+      },
+    ],
+  },
+  '4_Research/28_MoralBankruptcy': {
+    note: [
+      'Morální bankrot: normalizované selhání hodnot v rámci systému (instituce, třída, národ).',
+      'Fassbinder: poválečná morální zkaženost + buržoazní pokrytectví; “respektabilita” jako maska.',
+      'Everyday fascism: rodina, přátelství, práce — malé moci, které dělají velký režim.',
+    ].join('\n\n'),
+    protipol: 'Sebereflexe, odpovědnost, etika bez PR.',
+    casovaOsa: [
+      {
+        historical: 'Poválečné “čisté štíty”, kolektivní zapomínání.',
+        contemporary: 'Brand morality, greenwashing, “values” jako marketing.',
+      },
+    ],
+  },
+  '4_Research/29_BakhtinianInversion': {
+    note: [
+      'Bachtin: převrácení řádu, smích, tělo, dialog. Inversion jako dočasné okno, které systém paradoxně potřebuje.',
+      'Nejen anarchie: inversion je mechanismus, jak přesměrovat tlak a znovu upevnit normu.',
+    ].join('\n\n'),
+    protipol: 'Jednosměrná autorita, monolog, “proper” řeč bez těla.',
+    casovaOsa: [
+      {
+        historical: 'Masopust, karnevalové licence.',
+        contemporary: 'Memy, parodie institucí, ironie jako politická technika.',
+      },
+    ],
+  },
+  '4_Research/30_SlotMachine': {
+    note: [
+      'Slot machine: náhodná odměna, opakování, “sweet spot” — feed jako hazardní rozhraní.',
+      'Smyčka bez katarze: návrat není spasení, jen další spin.',
+      'Kapitalismus emocí: pozornost a afekt jako měna (kdo koho “využívá” a kdo to platí tělem).',
+    ].join('\n\n'),
+    protipol: 'Záměr, pomalost, smysluplná odměna mimo náhodu.',
+    casovaOsa: [
+      {
+        historical: 'Mechanický automat, arkády.',
+        contemporary: 'Infinite scroll, loot boxes, engagement algoritmy.',
       },
     ],
   },

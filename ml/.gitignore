@@ -1,0 +1,8 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+data/instance_flat/
+outputs/
+vendor/
+.runs

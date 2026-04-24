@@ -1,7 +1,7 @@
 import path from 'path';
 import fsp from 'fs/promises';
 
-const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
+const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
 
 export function filePathToEncodedUrl(repoRoot, absFilePath) {
   const rel = path.relative(repoRoot, absFilePath).split(path.sep).join('/');

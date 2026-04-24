@@ -3,6 +3,9 @@ const TRIGGER_SLIDE_MS = 400;
 const TRIGGER_MS = 15000;
 const RESEARCH_API = '/api/research-images';
 
+const WIPE_MS_BASELINE = 420;
+const WIPE_MS_TRIGGER = 220;
+
 const CYCLE_MS_L = 34000;
 const CYCLE_MS_R = 29500;
 const PHASE_OFFSET_MS_R = 70000;
@@ -83,8 +86,16 @@ let inTrigger = false;
 
 let displayCanvasL = null;
 let displayCtxL = null;
+let displayCanvasL2 = null;
+let displayCtxL2 = null;
+let activeL = 0;
+let animL = null;
 let displayCanvasR = null;
 let displayCtxR = null;
+let displayCanvasR2 = null;
+let displayCtxR2 = null;
+let activeR = 0;
+let animR = null;
 let resizeScheduled = false;
 
 let rafId = null;
@@ -156,14 +167,81 @@ function mountDisplayCanvas() {
   paneR = document.getElementById('pane-right');
   if (!paneL || !paneR) return;
   displayCanvasL = document.createElement('canvas');
+  displayCanvasL2 = document.createElement('canvas');
   displayCtxL = displayCanvasL.getContext('2d', { alpha: false });
+  displayCtxL2 = displayCanvasL2.getContext('2d', { alpha: false });
   displayCanvasR = document.createElement('canvas');
+  displayCanvasR2 = document.createElement('canvas');
   displayCtxR = displayCanvasR.getContext('2d', { alpha: false });
-  paneL.replaceChildren(displayCanvasL);
-  paneR.replaceChildren(displayCanvasR);
+  displayCtxR2 = displayCanvasR2.getContext('2d', { alpha: false });
+
+  displayCanvasL.className = 'pane-layer';
+  displayCanvasL2.className = 'pane-layer';
+  displayCanvasR.className = 'pane-layer';
+  displayCanvasR2.className = 'pane-layer';
+
+  activeL = 0;
+  activeR = 0;
+  displayCanvasL.style.transform = 'translateY(0%)';
+  displayCanvasL2.style.transform = 'translateY(100%)';
+  displayCanvasR.style.transform = 'translateY(0%)';
+  displayCanvasR2.style.transform = 'translateY(100%)';
+
+  paneL.replaceChildren(displayCanvasL, displayCanvasL2);
+  paneR.replaceChildren(displayCanvasR, displayCanvasR2);
   const ro = new ResizeObserver(() => scheduleResizeFrame());
   ro.observe(paneL);
   ro.observe(paneR);
+}
+
+function wipeFromTop(side, durationMs) {
+  if (side === 'L') {
+    const cur = activeL === 0 ? displayCanvasL : displayCanvasL2;
+    const nxt = activeL === 0 ? displayCanvasL2 : displayCanvasL;
+    if (animL) animL.cancel();
+    cur.style.transform = 'translateY(0%)';
+    nxt.style.transform = 'translateY(-100%)';
+    cur.animate(
+      [{ transform: 'translateY(0%)' }, { transform: 'translateY(100%)' }],
+      { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+    );
+    animL = nxt.animate(
+      [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0%)' }],
+      { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+    );
+    animL.onfinish = () => {
+      activeL ^= 1;
+      animL = null;
+      const off = activeL === 0 ? displayCanvasL2 : displayCanvasL;
+      off.style.transform = 'translateY(100%)';
+    };
+    animL.oncancel = () => {
+      animL = null;
+    };
+  } else {
+    const cur = activeR === 0 ? displayCanvasR : displayCanvasR2;
+    const nxt = activeR === 0 ? displayCanvasR2 : displayCanvasR;
+    if (animR) animR.cancel();
+    cur.style.transform = 'translateY(0%)';
+    nxt.style.transform = 'translateY(-100%)';
+    cur.animate(
+      [{ transform: 'translateY(0%)' }, { transform: 'translateY(100%)' }],
+      { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+    );
+    animR = nxt.animate(
+      [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0%)' }],
+      { duration: durationMs, easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)', fill: 'forwards' }
+    );
+    animR.onfinish = () => {
+      activeR ^= 1;
+      animR = null;
+      const off = activeR === 0 ? displayCanvasR2 : displayCanvasR;
+      off.style.transform = 'translateY(100%)';
+    };
+    animR.oncancel = () => {
+      animR = null;
+    };
+  }
 }
 
 function stopRaf() {
@@ -222,6 +300,22 @@ async function refreshImageCache() {
     }
     cacheL = flat.slice(0, 3);
     cacheR = flat.slice(3, 6);
+
+    if (displayCtxL && displayCtxL2 && displayCtxR && displayCtxR2) {
+      const now = performance.now();
+      const pL = buildOpts('L', now);
+      const pR = buildOpts('R', now);
+      const outL = bc.blendLikeProcessing(cacheL[0], cacheL[1], cacheL[2], w, h, pL);
+      const outR = bc.blendLikeProcessing(cacheR[0], cacheR[1], cacheR[2], w, h, pR);
+      if (outL?.width && outR?.width) {
+        const ctxInL = activeL === 0 ? displayCtxL2 : displayCtxL;
+        const ctxInR = activeR === 0 ? displayCtxR2 : displayCtxR;
+        ctxInL.drawImage(outL, 0, 0, w, h);
+        ctxInR.drawImage(outR, 0, 0, w, h);
+        wipeFromTop('L', WIPE_MS_BASELINE);
+        wipeFromTop('R', WIPE_MS_BASELINE);
+      }
+    }
   } catch (e) {
     if (ui.status) ui.status.textContent = String(e?.message || e);
   } finally {
@@ -232,15 +326,29 @@ async function refreshImageCache() {
 function drawAnimatedStep() {
   if (inTrigger) return;
   const bc = BC();
-  if (!bc || !displayCtxL || !displayCtxR || !cacheL || !cacheR || cacheLoading) return;
+  if (
+    !bc ||
+    !displayCtxL ||
+    !displayCtxL2 ||
+    !displayCtxR ||
+    !displayCtxR2 ||
+    !cacheL ||
+    !cacheR ||
+    cacheLoading
+  )
+    return;
   const { w, h } = paneDims();
   if (w < 32 || h < 32) return;
   const now = performance.now();
 
   displayCanvasL.width = w;
   displayCanvasL.height = h;
+  displayCanvasL2.width = w;
+  displayCanvasL2.height = h;
   displayCanvasR.width = w;
   displayCanvasR.height = h;
+  displayCanvasR2.width = w;
+  displayCanvasR2.height = h;
 
   try {
     const pL = buildOpts('L', now);
@@ -248,8 +356,10 @@ function drawAnimatedStep() {
     const outL = bc.blendLikeProcessing(cacheL[0], cacheL[1], cacheL[2], w, h, pL);
     const outR = bc.blendLikeProcessing(cacheR[0], cacheR[1], cacheR[2], w, h, pR);
     if (outL?.width && outR?.width) {
-      displayCtxL.drawImage(outL, 0, 0, w, h);
-      displayCtxR.drawImage(outR, 0, 0, w, h);
+      const ctxOutL = activeL === 0 ? displayCtxL : displayCtxL2;
+      const ctxOutR = activeR === 0 ? displayCtxR : displayCtxR2;
+      ctxOutL.drawImage(outL, 0, 0, w, h);
+      ctxOutR.drawImage(outR, 0, 0, w, h);
     }
   } catch (e) {
     if (ui.status) ui.status.textContent = String(e?.message || e);
@@ -257,7 +367,7 @@ function drawAnimatedStep() {
 }
 
 async function runTriggerFrame() {
-  if (triggerBusy || !displayCtxL || !displayCtxR) return;
+  if (triggerBusy || !displayCtxL || !displayCtxL2 || !displayCtxR || !displayCtxR2) return;
   const bc = BC();
   if (!bc) return;
   const urlsL = pickTriplet();
@@ -269,8 +379,12 @@ async function runTriggerFrame() {
   try {
     displayCanvasL.width = w;
     displayCanvasL.height = h;
+    displayCanvasL2.width = w;
+    displayCanvasL2.height = h;
     displayCanvasR.width = w;
     displayCanvasR.height = h;
+    displayCanvasR2.width = w;
+    displayCanvasR2.height = h;
     const flat = await bc.loadImagesForUrls([...urlsL, ...urlsR]);
     const imgsL = flat.slice(0, 3);
     const imgsR = flat.slice(3, 6);
@@ -287,8 +401,12 @@ async function runTriggerFrame() {
     if (!outL?.width || !outR?.width) {
       throw new Error('Výstup blendu je prázdný.');
     }
-    displayCtxL.drawImage(outL, 0, 0, w, h);
-    displayCtxR.drawImage(outR, 0, 0, w, h);
+    const ctxInL = activeL === 0 ? displayCtxL2 : displayCtxL;
+    const ctxInR = activeR === 0 ? displayCtxR2 : displayCtxR;
+    ctxInL.drawImage(outL, 0, 0, w, h);
+    ctxInR.drawImage(outR, 0, 0, w, h);
+    wipeFromTop('L', WIPE_MS_TRIGGER);
+    wipeFromTop('R', WIPE_MS_TRIGGER);
   } catch (e) {
     if (ui.status) ui.status.textContent = String(e?.message || e);
   } finally {

@@ -11,11 +11,17 @@ import {
   IMAGE_EXT,
 } from './lib/public-tree.mjs';
 import { buildResearchGalleryPayload } from './lib/research-gallery.mjs';
-import { buildGlossaryPayload } from './lib/sequence-notes.mjs';
+import {
+  buildGlossaryPayload,
+  defaultResearchPairId,
+  researchLabelMeta,
+  researchPairPresets,
+} from './lib/sequence-notes.mjs';
 import {
   buildInspirationCloudPayload,
   buildMaterialCloudPayload,
 } from './lib/browse-cloud-payload.mjs';
+import { handleMlApi } from './lib/ml-api.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
@@ -25,6 +31,36 @@ const scssRoot = path.join(root, 'assets', 'scss');
 
 const clients = new Set();
 let reloadTimer = null;
+
+const REDDIT_VIDEOS_TTL_MS = Number(process.env.REDDIT_VIDEOS_TTL_MS) || 10 * 60 * 1000;
+let redditVideosCache = { at: 0, payload: null, inflight: null };
+
+async function getRedditVideosCached() {
+  const now = Date.now();
+  const fresh = redditVideosCache.payload && now - redditVideosCache.at < REDDIT_VIDEOS_TTL_MS;
+  if (fresh) return { payload: redditVideosCache.payload, cache: 'hit' };
+  if (redditVideosCache.inflight) {
+    try {
+      const payload = await redditVideosCache.inflight;
+      return { payload, cache: 'coalesced' };
+    } catch (_) {}
+  }
+  redditVideosCache.inflight = (async () => {
+    const payload = await fetchRedditVideosPayload();
+    redditVideosCache.payload = payload;
+    redditVideosCache.at = Date.now();
+    return payload;
+  })();
+  try {
+    const payload = await redditVideosCache.inflight;
+    return { payload, cache: 'miss' };
+  } catch (e) {
+    if (redditVideosCache.payload) return { payload: redditVideosCache.payload, cache: 'stale' };
+    throw e;
+  } finally {
+    redditVideosCache.inflight = null;
+  }
+}
 
 function notifyReload() {
   clearTimeout(reloadTimer);
@@ -56,6 +92,29 @@ function normalizeResearchPair(left, right) {
   const all = left.concat(right);
   if (all.length < 3) return { left, right };
   return splitIntoLeftRight(all);
+}
+
+function resolveResearchPairConfig() {
+  const id = process.env.SEQUENCE_RESEARCH_PAIR || defaultResearchPairId;
+  return researchPairPresets.find((p) => p.id === id) || researchPairPresets[0] || null;
+}
+
+function researchPairInfoForResponse() {
+  const cfg = resolveResearchPairConfig();
+  if (!cfg) return null;
+  const l = researchLabelMeta[cfg.left];
+  const r = researchLabelMeta[cfg.right];
+  const folderSlug = (label) => {
+    const last = (label.split('/').pop() || label).replace(/^\d+_/, '');
+    return last || label;
+  };
+  return {
+    id: cfg.id,
+    leftPath: cfg.left,
+    rightPath: cfg.right,
+    leftTitle: (l && String(l.displayTitle || '').trim()) || folderSlug(cfg.left),
+    rightTitle: (r && String(r.displayTitle || '').trim()) || folderSlug(cfg.right),
+  };
 }
 
 async function collectImageUrlsInDir(absDir) {
@@ -96,6 +155,49 @@ async function collectImagesRecursiveUnder(absDir) {
   return out.sort();
 }
 
+const VIDEO_EXT = new Set(['.mp4', '.webm', '.mov', '.m4v']);
+
+async function collectVideosRecursiveUnder(absDir) {
+  const out = [];
+  let entries;
+  try {
+    entries = await fsp.readdir(absDir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const ent of entries) {
+    const full = path.join(absDir, ent.name);
+    if (ent.isDirectory()) {
+      out.push(...(await collectVideosRecursiveUnder(full)));
+    } else if (ent.isFile()) {
+      const ext = path.extname(ent.name).toLowerCase();
+      if (!VIDEO_EXT.has(ext)) continue;
+      out.push(filePathToEncodedUrl(rootResolved, full));
+    }
+  }
+  return out;
+}
+
+async function collectVideosInNamedDirsUnder(absDir, dirName) {
+  const out = [];
+  let entries;
+  try {
+    entries = await fsp.readdir(absDir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const ent of entries) {
+    if (!ent.isDirectory()) continue;
+    const full = path.join(absDir, ent.name);
+    if (ent.name === dirName) {
+      out.push(...(await collectVideosRecursiveUnder(full)));
+      continue;
+    }
+    out.push(...(await collectVideosInNamedDirsUnder(full, dirName)));
+  }
+  return out;
+}
+
 function publicTreeJsonHandler(absRoot) {
   return async (_req, res) => {
     try {
@@ -124,6 +226,10 @@ const MIME = {
   '.jpeg': 'image/jpeg',
   '.ico': 'image/x-icon',
   '.webp': 'image/webp',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.mov': 'video/quicktime',
+  '.m4v': 'video/x-m4v',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
 };
@@ -133,6 +239,71 @@ async function handle(req, res) {
   if (!urlPath.startsWith('/')) urlPath = '/' + urlPath;
   urlPath = urlPath.replace(/\/+$/, '') || '/';
   if (urlPath === '/') urlPath = '/index.html';
+
+  if (handleMlApi(req, res, rootResolved)) {
+    return;
+  }
+
+  if (urlPath === '/api/concept' && req.method === 'GET') {
+    try {
+      const jsonPath = path.join(rootResolved, 'public', 'api-public-tree', 'concept.json');
+      let body;
+      try {
+        body = await fsp.readFile(jsonPath, 'utf8');
+      } catch {
+        body = JSON.stringify({ html: '' });
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (urlPath === '/api/concept' && req.method === 'POST') {
+    const jsonPath = path.join(rootResolved, 'public', 'api-public-tree', 'concept.json');
+    try {
+      const chunks = [];
+      for await (const c of req) chunks.push(c);
+      const raw = Buffer.concat(chunks).toString('utf8');
+      const parsed = raw ? JSON.parse(raw) : {};
+      const body = JSON.stringify(parsed && typeof parsed === 'object' ? parsed : {}, null, 2) + '\n';
+      await fsp.writeFile(jsonPath, body, 'utf8');
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
+
+  if (urlPath === '/api/data-videos' && req.method === 'GET') {
+    try {
+      const root7 = path.join(rootResolved, 'public', '7_DataVideos');
+      const urls = await collectVideosInNamedDirsUnder(root7, '_Video');
+      urls.sort();
+      const { left, right } = splitIntoLeftRight(urls);
+      const body = JSON.stringify({ all: urls, left, right });
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+      res.end(body);
+    } catch (e) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: String(e?.message || e) }));
+    }
+    return;
+  }
 
   if (urlPath === '/api/research-images' && req.method === 'GET') {
     try {
@@ -146,6 +317,20 @@ async function handle(req, res) {
       baselineLeft = b.left;
       baselineRight = b.right;
       let bUnion = baselineLeft.length + baselineRight.length;
+      if (baselineLeft.length === 0 || baselineRight.length === 0 || bUnion < 3) {
+        const pairCfg = resolveResearchPairConfig();
+        if (pairCfg) {
+          const leftPath = path.join(research4, ...pairCfg.left.split('/').slice(1));
+          const rightPath = path.join(research4, ...pairCfg.right.split('/').slice(1));
+          const L = await collectImagesRecursiveUnder(rootResolved, leftPath);
+          const R = await collectImagesRecursiveUnder(rootResolved, rightPath);
+          if (L.length > 0 && R.length > 0 && L.length + R.length >= 3) {
+            baselineLeft = L;
+            baselineRight = R;
+            bUnion = L.length + R.length;
+          }
+        }
+      }
       if (baselineLeft.length === 0 || baselineRight.length === 0 || bUnion < 3) {
         const allSub = await collectImagesRecursiveUnder(researchRoot);
         if (allSub.length >= 3) {
@@ -174,6 +359,7 @@ async function handle(req, res) {
       const body = JSON.stringify({
         baseline: { left: baselineLeft, right: baselineRight },
         trigger: { left: triggerLeft, right: triggerRight },
+        pair: researchPairInfoForResponse(),
       });
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
@@ -193,7 +379,18 @@ async function handle(req, res) {
     req.method === 'GET'
   ) {
     try {
-      const body = JSON.stringify(await buildResearchGalleryPayload(rootResolved));
+      const jsonPath = path.join(
+        rootResolved,
+        'public',
+        'api-public-tree',
+        'research-gallery.json',
+      );
+      let body;
+      try {
+        body = await fsp.readFile(jsonPath, 'utf8');
+      } catch {
+        body = JSON.stringify(await buildResearchGalleryPayload(rootResolved));
+      }
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
@@ -299,11 +496,12 @@ async function handle(req, res) {
 
   if (urlPath === '/api/reddit-videos' && req.method === 'GET') {
     try {
-      const payload = await fetchRedditVideosPayload();
+      const { payload, cache } = await getRedditVideosCached();
       const body = JSON.stringify(payload);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
+        'X-Sequence-Cache': cache,
       });
       res.end(body);
     } catch (e) {

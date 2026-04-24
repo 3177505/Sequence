@@ -166,13 +166,115 @@
   <h2>Přehled součástek (grafika)</h2>
   <p>Ilustrace ve složce <code>public/wiring-epaper-components/</code> — zjednodušené pohledy pro research, ne měřicí výkres.</p>
   <div class="component-strip" aria-label="Součástky">
-    <figure><img src="/public/wiring-epaper-components/raspberry-pi.svg" width="320" height="220" alt="Raspberry Pi" loading="lazy"><figcaption>Raspberry Pi</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/epaper-gdem0154.svg" width="280" height="200" alt="E-paper GDEM0154" loading="lazy"><figcaption>GDEM0154F51H</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/arduino-nano.svg" width="300" height="120" alt="Arduino Nano" loading="lazy"><figcaption>Nano · trigger</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/gpio-expander.svg" width="300" height="180" alt="GPIO expander" loading="lazy"><figcaption>GPIO expandér</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/powerbank.svg" width="280" height="140" alt="Powerbank" loading="lazy"><figcaption>Powerbank</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/hdmi-display.svg" width="240" height="200" alt="HDMI display" loading="lazy"><figcaption>HDMI · volitelně</figcaption></figure>
-    <figure><img src="/public/wiring-epaper-components/lever-switch.svg" width="300" height="160" alt="Páka spínač" loading="lazy"><figcaption>Páka · spínač</figcaption></figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Raspberry Pi">
+        <rect width="320" height="220" fill="#141414"/>
+        <text x="160" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">Raspberry Pi 4 / 5</text>
+        <rect x="40" y="38" width="240" height="150" rx="10" fill="#1e5c3a" stroke="#2a8f5c" stroke-width="2"/>
+        <rect x="130" y="70" width="60" height="50" rx="4" fill="#0d2818" stroke="#3d9" stroke-width="1" opacity="0.9"/>
+        <rect x="52" y="48" width="36" height="14" rx="2" fill="#252525" stroke="#4c8cc9"/>
+        <text x="70" y="58" text-anchor="middle" fill="#8cc" font-family="system-ui,sans-serif" font-size="7">µHDMI</text>
+        <rect x="96" y="48" width="36" height="14" rx="2" fill="#252525" stroke="#4c8cc9"/>
+        <text x="114" y="58" text-anchor="middle" fill="#8cc" font-family="system-ui,sans-serif" font-size="7">µHDMI</text>
+        <rect x="52" y="132" width="44" height="18" rx="3" fill="#252525" stroke="#c9a64c"/>
+        <text x="74" y="144" text-anchor="middle" fill="#eca" font-family="system-ui,sans-serif" font-size="7">USB-C</text>
+        <rect x="104" y="132" width="50" height="44" rx="4" fill="#222" stroke="#555"/>
+        <text x="129" y="152" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="7">USB</text>
+        <text x="129" y="166" text-anchor="middle" fill="#6b8" font-family="system-ui,sans-serif" font-size="7">Nano</text>
+        <rect x="168" y="130" width="100" height="40" rx="2" fill="#0f331f" stroke="#2a8f5c"/>
+        <text x="218" y="148" text-anchor="middle" fill="#9c9" font-family="system-ui,sans-serif" font-size="8">GPIO · SPI</text>
+        <text x="218" y="162" text-anchor="middle" fill="#7a7" font-family="system-ui,sans-serif" font-size="7">MOSI SCK + CS&amp;</text>
+        <text x="160" y="206" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">Chromium · Sequence · volitelné HDMI</text>
+      </svg>
+      <figcaption>Raspberry Pi</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" role="img" aria-label="E-paper 4-color modul">
+        <rect width="280" height="200" fill="#141414"/>
+        <text x="140" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">GDEM0154F51H  1,54 in  200x200</text>
+        <rect x="52" y="40" width="176" height="100" rx="6" fill="#252018" stroke="#a85" stroke-width="2"/>
+        <rect x="64" y="52" width="148" height="76" rx="2" fill="#f0ebe3" stroke="#333"/>
+        <rect x="76" y="64" width="14" height="14" fill="#1a1a1a"/>
+        <rect x="94" y="64" width="14" height="14" fill="#fff"/>
+        <rect x="112" y="64" width="14" height="14" fill="#c9a64c"/>
+        <rect x="130" y="64" width="14" height="14" fill="#c94c4c"/>
+        <text x="140" y="118" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="8">B / W / lutá / ?ervená</text>
+        <rect x="120" y="145" width="40" height="22" rx="2" fill="#3a3530" stroke="#665"/>
+        <text x="140" y="160" text-anchor="middle" fill="#aaa" font-family="system-ui,sans-serif" font-size="7">24pin FPC</text>
+        <text x="140" y="188" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">SPI  3,3 V  CS DC RST BUSY</text>
+      </svg>
+      <figcaption>GDEM0154F51H</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120" role="img" aria-label="Arduino Nano">
+        <rect width="300" height="120" fill="#141414"/>
+        <text x="150" y="20" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">Arduino Nano · USB sériový trigger</text>
+        <rect x="70" y="36" width="160" height="56" rx="4" fill="#1a4d2e" stroke="#3d6" stroke-width="2"/>
+        <rect x="86" y="48" width="48" height="32" rx="2" fill="#222" stroke="#555"/>
+        <text x="110" y="67" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="7">MCU</text>
+        <rect x="196" y="44" width="22" height="16" rx="2" fill="#333" stroke="#6bc94c"/>
+        <text x="207" y="55" text-anchor="middle" fill="#ada" font-family="system-ui,sans-serif" font-size="6">USB</text>
+        <text x="150" y="108" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">115200 baud · Web Serial · páka na GND + pin</text>
+      </svg>
+      <figcaption>Nano · trigger</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 180" role="img" aria-label="GPIO expandér">
+        <rect width="300" height="180" fill="#141414"/>
+        <text x="150" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">I²C GPIO expandér (napY. MCP23017&amp;)</text>
+        <rect x="90" y="48" width="120" height="72" rx="6" fill="#2a2845" stroke="#6b6bc9" stroke-width="2"/>
+        <rect x="110" y="64" width="80" height="40" rx="3" fill="#1a1830" stroke="#554"/>
+        <text x="150" y="88" text-anchor="middle" fill="#aac" font-family="system-ui,sans-serif" font-size="9">16-bit I/O</text>
+        <text x="58" y="100" fill="#9cf" font-family="system-ui,sans-serif" font-size="8">SDA</text>
+        <text x="58" y="116" fill="#9cf" font-family="system-ui,sans-serif" font-size="8">SCL</text>
+        <text x="230" y="92" fill="#9d9" font-family="system-ui,sans-serif" font-size="8">GPIO</text>
+        <text x="230" y="108" fill="#9d9" font-family="system-ui,sans-serif" font-size="8">’ CS</text>
+        <text x="230" y="124" fill="#9d9" font-family="system-ui,sans-serif" font-size="8">’ DC &amp;</text>
+        <text x="150" y="156" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">Pro 8× EPD vtainou nutné vedle pYímých GPIO Pi</text>
+      </svg>
+      <figcaption>GPIO expandér</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 140" role="img" aria-label="Powerbank">
+        <rect width="280" height="140" fill="#141414"/>
+        <text x="140" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">Powerbank ’ Pi (USB-A ’ USB-C)</text>
+        <rect x="56" y="44" width="168" height="56" rx="8" fill="#3a3530" stroke="#777" stroke-width="2"/>
+        <rect x="188" y="52" width="28" height="18" rx="3" fill="#333" stroke="#c9a64c"/>
+        <text x="202" y="64" text-anchor="middle" fill="#eca" font-family="system-ui,sans-serif" font-size="7">USBA</text>
+        <path fill="none" stroke="#c9a64c" stroke-width="3" stroke-linecap="round" d="M 216 62 L 248 62"/>
+        <rect x="248" y="52" width="12" height="20" rx="2" fill="#252525" stroke="#888"/>
+        <text x="140" y="128" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">Stejné napájení jako u wiring-guide kiosku</text>
+      </svg>
+      <figcaption>Powerbank</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="HDMI obrazovka">
+        <rect width="240" height="200" fill="#141414"/>
+        <text x="120" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">Volitelný HDMI panel · Sequence</text>
+        <rect x="40" y="42" width="160" height="118" rx="8" fill="#252525" stroke="#4c8cc9" stroke-width="2"/>
+        <rect x="52" y="54" width="136" height="88" rx="2" fill="#1a3048" stroke="#369"/>
+        <text x="120" y="102" text-anchor="middle" fill="#6ac" font-family="system-ui,sans-serif" font-size="9">Chromium</text>
+        <rect x="112" y="166" width="16" height="10" rx="1" fill="#333" stroke="#4c8cc9"/>
+        <text x="120" y="188" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">µHDMI z Pi</text>
+      </svg>
+      <figcaption>HDMI · volitelně</figcaption>
+    </figure>
+    <figure>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 160" role="img" aria-label="Páka a mikrospína&#13;">
+        <rect width="300" height="160" fill="#141414"/>
+        <text x="150" y="22" text-anchor="middle" fill="#888" font-family="system-ui,sans-serif" font-size="11">Páka · mikrospína&#13; · Dupont k Nano</text>
+        <rect x="168" y="48" width="96" height="56" rx="8" fill="#2a2820" stroke="#a65" stroke-width="2"/>
+        <path fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="round" d="M 200 52 L 188 44"/>
+        <circle cx="182" cy="84" r="4" fill="#c94c4c" stroke="#822"/>
+        <circle cx="230" cy="84" r="4" fill="#c94c4c" stroke="#822"/>
+        <text x="216" y="42" text-anchor="middle" fill="#ccc" font-family="system-ui,sans-serif" font-size="9">Spína&#13;</text>
+        <path fill="none" stroke="#c94c4c" stroke-width="2" d="M 168 84 L 52 84"/>
+        <text x="88" y="78" fill="#eaa" font-family="system-ui,sans-serif" font-size="8">GND</text>
+        <text x="88" y="96" fill="#eaa" font-family="system-ui,sans-serif" font-size="8">D2</text>
+        <text x="150" y="138" text-anchor="middle" fill="#555" font-family="system-ui,sans-serif" font-size="8">INPUT_PULLUP · viz wiring-guide</text>
+      </svg>
+      <figcaption>Páka · spínač</figcaption>
+    </figure>
   </div>
 
   <h2>Signály na breakoutu (obecné SPI e-paper)</h2>

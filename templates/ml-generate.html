@@ -1,0 +1,67 @@
+  <div class="manufacturing-prose">
+  <h1>ML generování</h1>
+  <p class="ml-note">Průvodce s tlačítky: <a href="ml-dashboard.html">ML průvodce</a>.</p>
+
+  <div class="ml-explain" role="region" aria-label="Jednoduché vysvětlení">
+    <p><strong>Co se děje, když to spustíš:</strong></p>
+    <p>
+      Znovu stejná báze: model <a href="https://huggingface.co/runwayml/stable-diffusion-v1-5" rel="noopener">Stable Diffusion 1.5</a> —
+      vybere se podle <strong>anglického textu (promptu)</strong> a vykreslí <strong>jeden nebo víc PNG</strong>.
+    </p>
+    <p>
+      Volitelně načteme <strong>LoRA</strong> ze složky <code>ml/outputs/lora-run</code>, pokud jsi trénink už dohnal a uvnitř jsou soubory.
+      Bez toho to pořád funguje jako „obecný“ SD1.5 — jen méně „tvé“.
+    </p>
+    <p>
+      Skript je <code>ml/generate.py</code> (knihovna <strong>Diffusers</strong>). Výstupy: <code>ml/outputs/gen/</code>
+      (např. <code>out_00.png</code>, <code>out_01.png</code> pro dvě plochy).
+    </p>
+  </div>
+
+  <h2>Postup: Mac a Windows</h2>
+
+  <div class="ml-2col">
+    <div class="ml-2col__panel">
+      <h3>Mac (Terminal)</h3>
+      <p>Stejné venv jako u tréninku: <code>cd ml</code> → <code>source .venv/bin/activate</code>.</p>
+      <p><strong>S LoRA</strong> (až bude v <code>outputs/lora-run</code> něco uloženo):</p>
+      <pre>cd ml
+source .venv/bin/activate
+python generate.py \
+  --lora outputs/lora-run \
+  --prompt "a sksseq photograph, research images, detailed" \
+  --out-dir outputs/gen \
+  --count 2</pre>
+      <p><strong>Bez LoRA</strong> (hned, bez tréninku):</p>
+      <pre>python generate.py \
+  --prompt "a sksseq photograph, abstract, detailed" \
+  --out-dir outputs/gen \
+  --count 2</pre>
+    </div>
+    <div class="ml-2col__panel">
+      <h3>Windows (Terminal)</h3>
+      <p>Stejné příkazy v <code>ml</code>, aktivace: <code>.venv\Scripts\activate</code>.</p>
+      <p><strong>S LoRA:</strong></p>
+      <pre>cd ml
+.venv\Scripts\activate
+python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, research mood" --out-dir outputs\gen --count 2</pre>
+      <p><strong>Bez LoRA:</strong></p>
+      <pre>python generate.py --prompt "a sksseq photograph" --out-dir outputs\gen --count 2</pre>
+    </div>
+  </div>
+
+  <h2>Prohlížeč s tlačítky</h2>
+  <p>
+    Aplikace v <code>ml-gui/</code> (<code>python app.py</code>) má záložku pro generování: zadáš prompt, volitelně LoRA, výstup se zobrazí v okně. Vyžaduje vytvořené <code>ml/.venv</code> a podle <code>ml-gui/README.md</code> venv pro Gradio, nebo nainstaluj <code>gradio</code> do <code>ml/.venv</code>.
+  </p>
+
+  <h2>Velký jazykový model (LLM) později</h2>
+  <p>
+    Běžné je nechat <strong>LLM jen napsat nebo vylepšit prompt</strong> a obraz stále kreslí SD+LoRA. Dvě fáze, dva programy; není to jedna „hádanka v jednom souboru“.
+  </p>
+
+  <h2>Navazuje</h2>
+  <p>
+    <a href="ml-train.html">ML trénink</a> · <code>ml/README.md</code> · <code>RUN.md</code>
+  </p>
+  </div>

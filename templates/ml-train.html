@@ -1,0 +1,85 @@
+  <div class="manufacturing-prose">
+  <h1>ML trénink</h1>
+  <p class="ml-note">Tlačítka v prohlížeči (krok za krokem): <a href="ml-dashboard.html">ML průvodce</a> — jen s <code>npm run dev</code>.</p>
+
+  <div class="ml-explain" role="region" aria-label="Jednoduché vysvětlení">
+    <p><strong>Co to vlastně dělá (velmi stručně):</strong></p>
+    <p>
+      Představ si obří hotový <strong>generátor obrázků z textu</strong> — to je
+      <a href="https://huggingface.co/runwayml/stable-diffusion-v1-5" rel="noopener">Stable Diffusion 1.5</a>.
+      Už umí kreslit spoustu věcí, protože se kdysi učil na miliardách obrázků z internetu. Ty ho neprogramuješ od nuly.
+    </p>
+    <p>
+      <strong>LoRA</strong> je malý <em>doplněk</em> (jako tenká knížka navíc k velké encyklopedii): na tvém počítači se naučí
+      víc „tvé“ estetiky z fotek v <code>public/4_Research</code> (přes plochou složku <code>ml/data/instance_flat</code>).
+      Výstup ukládáme do <code>ml/outputs/lora-run</code>.
+    </p>
+    <p>
+      Technicky: knihovna <strong>Hugging Face Diffusers</strong> + oficiální skript
+      <strong>train_dreambooth_lora</strong>, spouštěný přes <strong>accelerate</strong> (nastaví, jestli jede CPU, GPU, …).
+    </p>
+    <p>
+      Dlouhé tréninkové běhy na <strong>CPU</strong> (běžné na Macu bez výkonné karty) trvají <strong>velmi dlouho</strong>.
+      Na <strong>Windows s NVIDIA GPU</strong> je to v praxi o řád rychlejší. Soubor
+      <code>251205_cc8_gpu_accelator.py</code> v <code>public/</code> je <em>něco jiného</em> (hrání s piny v klasifikační síti), ne tento trénink.
+    </p>
+  </div>
+
+  <h2>Postup: Mac a Windows vedle sebe</h2>
+  <p class="ml-note">Jedno společné: složka projektu musí být stejná, virtální prostředí v <code>ml/.venv</code> a trénink přes <code>ml/launch_train.py</code> (nebo <code>launch_train.sh</code> na Macu/Linuxu).</p>
+
+  <div class="ml-2col">
+    <div class="ml-2col__panel">
+      <h3>Mac (Terminal)</h3>
+      <p>Jednorázově: vytvoř <code>ml/.venv</code>, nainstaluj <code>ml/requirements.txt</code>, spusť <code>accelerate config</code> (odpovídej podle karty — na CPU bývá „no“ u mixed precision).</p>
+      <pre>cd ml
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -c "import numpy; assert numpy.__version__ &lt; '2'" || pip install "numpy>=1.26,&lt;2"
+accelerate config
+chmod +x launch_train.sh
+MAX_TRAIN_STEPS=200 ./launch_train.sh</pre>
+      <p><code>MAX_TRAIN_STEPS=200</code> (nebo 400) zkus na CPU dřív než 800. Plný běh bývá hodinový až denní. Nebo: <code>python launch_train.py</code> (stejná logika jako skript sh).</p>
+    </div>
+    <div class="ml-2col__panel">
+      <h3>Windows (Terminal)</h3>
+      <p>Stejná struktura, jiné cesty a aktivace venv. Doporučen je <strong>Python 3.10+</strong> a <strong>PyTorch s CUDA</strong>, pokud máš NVIDIA (rychlé učení).</p>
+      <pre>cd ml
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+pip install "numpy>=1.26,&lt;2" diffusers==0.32.2 "huggingface-hub>=0.34.0,&lt;1.0"
+accelerate config
+set MAX_TRAIN_STEPS=200
+set RESUME=
+python launch_train.py</pre>
+      <p>Příkazová řádka <strong>cmd</strong>. V PowerShell: <code>$env:MAX_TRAIN_STEPS=200</code> místo <code>set</code>.</p>
+      <p>Pro pokračování: <code>set RESUME=1</code> a znovu <code>python launch_train.py</code>, pokud existuje checkpoint v <code>outputs/lora-run</code>.</p>
+    </div>
+  </div>
+
+  <h2>Prohlížeč s tlačítky (Windows i Mac)</h2>
+  <p>
+    Ve složce <code>ml-gui/</code> je malá stránka (Gradio): tlačítko pro start tréninku, log, druhé tlačítko pro generování.
+    Potřebuje lehký install jen pro UI — viz <code>ml-gui/README.md</code>. Stejná <code>ml/.venv</code> s PyTorchem musí být hotová.
+  </p>
+  <pre>cd ml-gui
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python app.py</pre>
+  <p class="ml-note">Na Windows: <code>.venv\Scripts\python app.py</code> a otevře se prohlížeč na <code>127.0.0.1:7860</code>.</p>
+
+  <h2>Data</h2>
+  <p>
+    <code>4_Research</code> je strom; skript <code>ml/collect_instance_images.py</code> všechny obrázky sesype do
+    <code>ml/data/instance_flat</code>, což očekává trénink.
+  </p>
+
+  <h2>Další čtení v repu</h2>
+  <p>
+    <code>ml/README.md</code> · <code>RUN.md</code> (celý web + ML) ·
+    <a href="ml-generate.html">ML generování</a>
+  </p>
+  </div>

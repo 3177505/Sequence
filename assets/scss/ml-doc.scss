@@ -1,0 +1,144 @@
+@use 'vars' as *;
+
+.ml-gradio-as-research.research-gallery {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0 0.25rem;
+}
+
+.ml-explain {
+  background: $bg-panel;
+  border: 1px solid $border-ui;
+  padding: 0.9rem 1.1rem;
+  margin: 0 0 1.1rem;
+  line-height: 1.55;
+  font-size: 0.92rem;
+  color: $text-muted;
+}
+
+.ml-explain strong {
+  color: $text-ui;
+}
+
+.ml-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.5rem 0 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .ml-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ml-2col__panel {
+  background: $bg-panel;
+  border: 1px solid $border-ui;
+  padding: 0.75rem 1rem;
+  min-width: 0;
+}
+
+.ml-2col__panel h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: $text-ui;
+  border-bottom: 1px solid $border-ui;
+  padding-bottom: 0.35rem;
+}
+
+.ml-2col__panel pre {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: $text-muted;
+}
+
+.ml-2col__panel p {
+  margin: 0.4rem 0 0.6rem;
+  font-size: 0.88rem;
+  color: $text-muted;
+}
+
+.ml-note {
+  font-size: 0.86rem;
+  color: $text-muted;
+  margin: 0.4rem 0 0.8rem;
+}
+
+.ml-step {
+  margin: 0 0 1.5rem;
+  padding: 0 0 0.5rem;
+}
+
+.ml-step h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  border-left: 3px solid $col-folder1-b;
+  padding-left: 0.5rem;
+}
+
+.ml-step--locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ml-step--locked a {
+  pointer-events: auto;
+}
+
+.ml-run {
+  font-size: 0.88rem;
+  color: $text-muted;
+  margin: 0.2rem 0;
+}
+
+.ml-log {
+  background: $bg-diagram;
+  border: 1px solid $border-ui;
+  color: $text-muted;
+  font: 0.75rem/1.4 ui-monospace, monospace;
+  max-height: 18rem;
+  overflow: auto;
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.65rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ml-unlock-bez {
+  color: $text-ui;
+}
+
+.ml-dashboard .ml-textarea {
+  width: 100%;
+  max-width: 42rem;
+  box-sizing: border-box;
+}
+
+.ml-dashboard .ml-input-num {
+  max-width: 5rem;
+}
+
+.ml-win-steps {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.35rem;
+  color: $text-muted;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.ml-win-steps li {
+  margin-bottom: 0.65rem;
+}
+
+.ml-win-steps pre {
+  margin: 0.4rem 0 0;
+  font-size: 0.78rem;
+  overflow-x: auto;
+}

@@ -45,6 +45,13 @@ body {
 .pane {
   min-height: 0;
   border: 1px solid $border-ui;
+  position: relative;
+  overflow: hidden;
+}
+
+.pane-layer {
+  position: absolute;
+  inset: 0;
 }
 
 .controls {
