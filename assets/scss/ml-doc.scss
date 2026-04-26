@@ -142,3 +142,76 @@
   font-size: 0.78rem;
   overflow-x: auto;
 }
+
+.ztk__input {
+  display: block;
+  width: 100%;
+  max-width: 44rem;
+  box-sizing: border-box;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+  color: $text-ui;
+  background: $bg-panel;
+  border: 1px solid $border-ui;
+}
+
+.ztk__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.ztk__tab {
+  font: inherit;
+  cursor: pointer;
+  color: $text-ui;
+  background: $btn-bg;
+  border: 1px solid $border-ui;
+  padding: 0.35rem 0.6rem;
+}
+
+.ztk__tab[aria-pressed="true"] {
+  border-color: $col-folder1-b;
+}
+
+.ztk__tab:focus-visible {
+  outline: 2px solid $col-folder1-b;
+  outline-offset: 2px;
+}
+
+.ztk__panel[hidden] {
+  display: none;
+}
+
+.ztk__panel {
+  margin: 0 0 0.5rem;
+}
+
+.ztk__code {
+  background: $bg-diagram;
+  border: 1px solid $border-ui;
+  color: $text-muted;
+  font: 0.75rem/1.4 ui-monospace, monospace;
+  max-height: 14rem;
+  overflow: auto;
+  margin: 0.35rem 0 0;
+  padding: 0.5rem 0.65rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ztk__copy {
+  font: inherit;
+  cursor: pointer;
+  color: $text-ui;
+  background: $btn-bg;
+  border: 1px solid $border-ui;
+  padding: 0.3rem 0.6rem;
+}
+
+.ztk__copy:focus-visible {
+  outline: 2px solid $col-folder1-b;
+  outline-offset: 2px;
+}

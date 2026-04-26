@@ -1,0 +1,54 @@
+  <div class="manufacturing-prose ztk">
+  <h1>Z-Image (Ostris) z 4_Research</h1>
+  <p class="ml-note"><strong>Krok 1 se nekopíruje do Terminálu</strong> — jen čti. <strong>Python 3.12</strong> po <code>brew install python@3.12</code> je na <strong>Apple Silicon</strong> v <code>/opt/homebrew/bin</code> a na <strong>Intel</strong> téměř vždy v <code>/usr/local/bin</code> — nikdy nezkoušej opačné cesty. <code>which python3.12</code> musí být platný před krokem 4. Starý <code>.venv</code> s 3.9: <code>rm -rf</code> v <code>ai-toolkit</code>. <strong>macOS Intel a torchcodec:</strong> u některých vydání pip nenajde <code>torchcodec==…</code> pro <code>macosx x86_64</code> — viz šedé pole níže u stránky.</p>
+
+  <p>
+    <label for="ztk-seq">Cesta ke kořeni Sequence (složka kde je <code>ml/</code> a <code>public/</code>)</label>
+    <input id="ztk-seq" class="ztk__input" type="text" autocomplete="off" placeholder="/cesta/k/Sequence" size="64">
+  </p>
+
+  <div class="ztk__bar" role="tablist" aria-label="Kroky průvodce">
+    <button type="button" class="ztk__tab" data-ztk-step="1" aria-pressed="true" id="ztk-t1">1 · Data</button>
+    <button type="button" class="ztk__tab" data-ztk-step="2" aria-pressed="false" id="ztk-t2">2 · Export</button>
+    <button type="button" class="ztk__tab" data-ztk-step="3" aria-pressed="false" id="ztk-t3">3 · Popisky</button>
+    <button type="button" class="ztk__tab" data-ztk-step="4" aria-pressed="false" id="ztk-t4">4 · Ostris</button>
+    <button type="button" class="ztk__tab" data-ztk-step="5" aria-pressed="false" id="ztk-t5">5 · Běh</button>
+  </div>
+
+  <section class="ztk__panel" data-ztk-panel="1" id="ztk-p1" aria-labelledby="ztk-t1" role="tabpanel">
+    <p><a href="research.html">Research</a> = stejné jako <code>public/4_Research</code> v disku. <strong>Sem nic nekopíruj</strong> — v Terminálu spouštíš až krok 2.</p>
+    <p>Příklad cesty k jednomu tématu: <code id="ztk-p1-ex">…</code></p>
+  </section>
+  <section class="ztk__panel" data-ztk-panel="2" id="ztk-p2" hidden aria-labelledby="ztk-t2" role="tabpanel">
+    <p>Export všech obrázků do ploché složky (skript v tomto repu). Spusť v Terminálu (bash / zsh).</p>
+    <pre class="ztk__code" data-ztk-cmd-for="2" id="ztk-cmd-2"></pre>
+    <p><button type="button" class="ztk__copy" data-ztk-copy="2">Kopírovat</button></p>
+  </section>
+  <section class="ztk__panel" data-ztk-panel="3" id="ztk-p3" hidden aria-labelledby="ztk-t3" role="tabpanel">
+    <p>Skript <code>ml/zimage_sidecar_captions.py</code> doplní chybějící <code>.txt</code> u exportovaných snímků. U důležitých uprav text ručně.</p>
+    <pre class="ztk__code" data-ztk-cmd-for="3" id="ztk-cmd-3"></pre>
+    <p><button type="button" class="ztk__copy" data-ztk-copy="3">Kopírovat</button></p>
+  </section>
+  <section class="ztk__panel" data-ztk-panel="4" id="ztk-p4" hidden aria-labelledby="ztk-t4" role="tabpanel">
+    <p>Nejprv musíš mít <strong>Python 3.10+</strong> (např. 3.12 z Homebrew). Jestli jsi dřív vytvořil <code>.venv</code> s Pythonem 3.9, složku <code>ai-toolkit/.venv</code> smaž a vytvoř znovu po instalaci 3.12. Pak v <code>config/examples/</code> příklad pro Z-Image, ulož jako <code>config/tvuj_zimage_config.yml</code> a doplň cestu k datasetu.</p>
+    <pre class="ztk__code" data-ztk-cmd-for="4" id="ztk-cmd-4"></pre>
+    <p><button type="button" class="ztk__copy" data-ztk-copy="4">Kopírovat</button></p>
+  </section>
+  <section class="ztk__panel" data-ztk-panel="5" id="ztk-p5" hidden aria-labelledby="ztk-t5" role="tabpanel">
+    <p>Nejdřív v editoru: YAML pro Z-Image, cesta v datasetu = <code>$HOME/ai-work/zimage_from_research/images</code> (případně přejmenuj <code>tvuj_zimage_config.yml</code> a uprav to v příkazu níže). Teprve pak tři příkazy z pole — není tam česká věta, jen shell. <a href="https://github.com/ostris/ai-toolkit" rel="noopener">Ostris</a> · pauza: <kbd>Ctrl</kbd>+<kbd>C</kbd> mimo ukládání, pak znovu <code>run.py</code> se stejným configem.</p>
+    <pre class="ztk__code" data-ztk-cmd-for="5" id="ztk-cmd-5"></pre>
+    <p><button type="button" class="ztk__copy" data-ztk-copy="5">Kopírovat</button></p>
+  </section>
+
+  <div class="ml-explain" role="region" aria-label="Problém torchcodec na Mac Intel">
+    <p><strong>Chyba: <code>No matching distribution found for torchcodec==0.9.1</code></strong> (u tebe s pip už skoro hotovo)</p>
+    <p>Na <strong>macOS Intel (x86_64)</strong> často <strong>neexistuje</strong> normální wheel pro přesné <code>torchcodec</code> z requirements Ostris — na PyPI u té kombinace zůstává jen prázdný <code>0.0.0.dev0</code>. <strong>Apple Silicon (M čipy)</strong> a <strong>Linux (RunPod, cloud GPU)</strong> jsou cesty, které u Ostris reálně fungují; projekt cílí hlavně na <strong>NVIDIA + Linux/Windows</strong>.</p>
+    <p>Co můžeš zkusit na Intel Macu <strong>na vlastní riziko</strong> (zálohuj repozitář, čistý stav: <code>git checkout -- requirements_base.txt</code> když potřebuješ vrátit): v <code>~/ai-work/ai-toolkit</code> otevři <code>requirements_base.txt</code>, <strong>dočasně smaž nebo vyškrtni celý řádek</strong> s <code>torchcodec</code>, ulož, pak z aktivovaného venv znovu <code>python -m pip install -r requirements.txt</code>. Import v části nástroje pro <strong>video</strong> pak může chybět — <strong>obrázkový / Z-Image LoRA</strong> bývá u některých větví v pohodě, u jiných ne. Spolehlivá varianta je <strong>Linux + GPU v cloudu</strong> dle <a href="https://github.com/ostris/ai-toolkit" rel="noopener">README u Ostris</a>.</p>
+  </div>
+
+  <p>
+    <a href="https://huggingface.co/Tongyi-MAI" rel="noopener">Hugging Face · Tongyi-MAI</a>
+    ·
+    <a href="ml-train.html">ML (Diffusers v repu)</a>
+  </p>
+  </div>
