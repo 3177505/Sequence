@@ -1,56 +1,20 @@
-# Sequence ML — browser UI (buttons)
+# Sequence ml-gui (Gradio)
 
-Small **Gradio** app that talks to the same **`ml/`** virtualenv and scripts as the terminal. Works on **Windows** (double-click friendly after one setup) and macOS.
+Local-only UI (default `http://127.0.0.1:7860`) for **Train LoRA** and **Generate**. Needs a working **`ml/.venv`** with PyTorch; see `../ml/README.md` (NVIDIA setup first on the GPU box).
 
-## What you need first
-
-1. A working **`ml/.venv`** with `pip install -r ml/requirements.txt` (PyTorch, diffusers, accelerate, etc.).
-2. A separate **light** venv for this UI (only Gradio), or install Gradio into `ml/.venv` if you prefer one environment.
-
-**Recommended (Windows):**
-
-```text
-cd path\to\Sequence\ml
-py -3 -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-cd ..\ml-gui
-py -3 -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-```
-
-## Run the app
-
-**Windows:**
-
-```text
-cd path\to\Sequence\ml-gui
-.venv\Scripts\python app.py
-```
-
-**macOS / Linux:**
+**One venv (simplest):** install `gradio` into `ml/.venv` and run:
 
 ```bash
-cd ml-gui
-source .venv/bin/activate
-python app.py
+cd /path/to/Sequence
+./ml/.venv/bin/python ml-gui/app.py
 ```
 
-A browser tab opens at **http://127.0.0.1:7860** (set `SEQUENCE_ML_GUI_PORT=8080` to change the port).
+Windows: `ml\.venv\Scripts\python.exe ml-gui\app.py` from the repo root.
 
-- **Train LoRA** — starts `ml/launch_train.py` in the background; log tail in the page, also written to `ml/outputs/training-gui.log`.
-- **Generate** — calls `ml/generate.py` and shows images from `ml/outputs/gen/`.
+**Two venvs:** create `ml-gui/.venv` with `pip install -r requirements.txt` (Gradio only), and keep heavy deps in `ml/.venv` — the app still invokes `ml/.venv` for training and generation.
 
-Training is still heavy on **CPU**; for speed use a **PC with an NVIDIA GPU** and the same repo layout.
+Override port: `SEQUENCE_ML_GUI_PORT=8080`.
 
-## One venv only
+Binds to **localhost** only; do not expose to the internet without auth.
 
-If you do not want two venvs:
-
-```bash
-cd ml && source .venv/bin/activate && pip install "gradio>=4,<6"
-cd ../ml-gui && ../ml/.venv/bin/python app.py
-```
-
-## Security note
-
-The UI binds to **localhost** only. Do not expose this port to the internet without authentication.
+Trains by running `ml/launch_train.py` (log tail: `ml/outputs/training-gui.log`). Generate writes under `ml/outputs/gen/`.

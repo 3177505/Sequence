@@ -1,5 +1,153 @@
 @use 'vars' as *;
 
+.manufacturing-prose .ml-manual__lead {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: $text-muted;
+  max-width: 48rem;
+  margin: 0 0 1rem;
+}
+
+.manufacturing-prose .ml-manual__lead strong {
+  color: $text-ui;
+}
+
+.ml-manual__toc {
+  background: $bg-table-header;
+  border: 1px solid $border-ui;
+  padding: 0.9rem 1.1rem 1rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.88rem;
+  color: $text-muted;
+  line-height: 1.55;
+}
+
+.ml-manual__toc h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: $text-ui;
+  font-weight: 600;
+}
+
+.ml-manual__toc ol {
+  margin: 0;
+  padding-left: 1.35rem;
+}
+
+.ml-manual__toc li {
+  margin: 0.25rem 0;
+}
+
+.ml-manual__toc a {
+  color: $col-folder1-b;
+}
+
+.ml-manual__toc a:hover,
+.ml-manual__toc a:focus-visible {
+  color: $text-ui;
+}
+
+.ml-guide-block {
+  border: 1px solid $border-ui;
+  padding: 1rem 1.15rem 1.1rem;
+  margin: 0 0 1rem;
+  line-height: 1.55;
+  color: $text-muted;
+  font-size: 0.9rem;
+}
+
+.ml-guide-block h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.02rem;
+  color: $text-ui;
+  font-weight: 600;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid $border-ui;
+}
+
+.ml-guide-block p {
+  margin: 0.5rem 0 0.65rem;
+}
+
+.ml-guide-block pre {
+  margin: 0.5rem 0 0.65rem;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: $bg-page;
+  border: 1px solid $border-ui;
+  padding: 0.5rem 0.6rem;
+  color: $text-ui;
+}
+
+.ml-guide-block--1 {
+  background: $ml-guide-block-1;
+}
+.ml-guide-block--2 {
+  background: $ml-guide-block-2;
+}
+.ml-guide-block--3 {
+  background: $ml-guide-block-3;
+}
+.ml-guide-block--4 {
+  background: $ml-guide-block-4;
+}
+.ml-guide-block--5 {
+  background: $ml-guide-block-5;
+}
+.ml-guide-block--6 {
+  background: $ml-guide-block-6;
+}
+.ml-guide-block--7 {
+  background: $ml-guide-block-7;
+}
+.ml-guide-block--8 {
+  background: $ml-guide-block-8;
+}
+
+.ml-guide-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0.65rem 0 0.25rem;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .ml-guide-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ml-guide-compare__col {
+  background: $ml-guide-compare;
+  border: 1px solid $border-ui;
+  padding: 0.7rem 0.85rem;
+  min-width: 0;
+}
+
+.ml-guide-compare__col h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+  color: $text-ui;
+  font-weight: 600;
+}
+
+.ml-guide-compare__col p {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+}
+
+.ml-guide-compare__label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $text-muted;
+  margin-bottom: 0.2rem;
+}
+
 .ml-gradio-as-research.research-gallery {
   margin-top: 0.5rem;
   margin-bottom: 0.75rem;

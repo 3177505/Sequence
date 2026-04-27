@@ -1,43 +1,60 @@
-# Sequence — local image training and generation
+# Sequence / ml — LoRA (DreamBooth) + SD1.5
 
-This folder is a small CLI product living next to the static site. It is not run by the web server; use a terminal (and a GPU is strongly recommended for training).
+Command-line training next to the static site. **Not** used by the web server. **Python 3.10+**; use a **NVIDIA GPU** for practical training. CPU and Apple MPS are possible but training will be very slow on CPU.
 
-**Suggested stack:** [Stable Diffusion 1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5) as the base generative model, plus **LoRA** trained on your research images (DreamBooth-style). That matches how people adapt diffusion models to a small personal image set.
+## 1) NVIDIA machine (recommended path)
 
-**Not the same as** `public/251205_cc8_gpu_accelator.py`, which is *feature visualization* (gradient ascent in a classifier). It does not learn weights from your `4_Research` folder.
-
-## Setup
-
-```bash
-cd ml
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-accelerate config
-```
+1. Install a current **NVIDIA driver** (Windows or Linux) from the vendor site.
+2. Create a venv in `ml/`, then install **PyTorch with CUDA** using the [official install commands](https://pytorch.org/get-started/locally/) for your OS (match CUDA / cu1xx to your driver).
+3. Install the rest of the stack (same venv):
+   ```bash
+   cd ml
+   # After torch/torchvision from pytorch.org, e.g.:
+   pip install -r requirements.txt
+   accelerate config
+   ```
+4. `accelerate config` — one GPU, mixed precision is fine; answer for a normal single-GPU workstation.
+5. Quick check:
+   ```bash
+   python -c "import torch; print('cuda', torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else '')"
+   ```
 
 ## Data
 
-`public/4_Research` is nested. The official DreamBooth script expects a **single folder of image files**. Run:
+- Training images: tree under `public/4_Research/`.
+- `launch_train` flattens that into `ml/data/instance_flat/` (via `collect_instance_images.py`) when needed.
+- Optional: per-image `*.txt` sidecars in the flat folder; `zimage_sidecar_captions.py` can create defaults for Ostris / Z-Image (see `zimage-toolkit.html`).
 
-```bash
-python collect_instance_images.py
-```
+## Train
 
-## Train LoRA
+From the **repository root** (so paths resolve the same on every OS):
 
-```bash
-./launch_train.sh
-```
+| Platform | Command |
+|----------|---------|
+| macOS / Linux | `./ml/launch_train.sh` (optional: `MAX_TRAIN_STEPS=400`, `RESUME=1`) |
+| Windows (cmd) | `ml\launch_train.bat` (optional: `set MAX_TRAIN_STEPS=400`, `set RESUME=1`) |
+| Any | `ml/.venv` Python: `python ml/launch_train.py` |
 
-First run downloads HuggingFace’s `train_dreambooth_lora.py` (pinned tag) into `ml/vendor/`.
+- First run downloads `train_dreambooth_lora.py` (pinned diffusers tag) into `ml/vendor/`.
+- Weights: `ml/outputs/lora-run/`.
+- `RESUME=1` (Unix) or `set RESUME=1` (Windows cmd) continues from the latest checkpoint in that folder.
 
 ## Generate
 
+With `ml/.venv` active and `cd ml`:
+
 ```bash
-python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, abstract diagram, high contrast" --out-dir outputs/gen --count 2
+python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, …" --out-dir outputs/gen --count 2
 ```
 
-Omit `--lora` to use only the base model.
+Omit `--lora` for base SD1.5 only.
 
-Site documentation: [ml-train.html](../ml-train.html) and [ml-generate.html](../ml-generate.html).
+## Gradio (buttons)
+
+`ml-gui/app.py` — see `../ml-gui/README.md`. Uses the **same** `ml/.venv`.
+
+## Not this pipeline
+
+`public/251205_cc8_gpu_accelator.py` is feature visualization in a classifier, not DreamBooth / LoRA on `4_Research`.
+
+Site: `../ml-manual.html` (jediná textová příručka), `../RUN.md`.

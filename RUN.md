@@ -39,7 +39,7 @@ Main entry pages: `index.html` (dual-pane prototype), `research.html` (research 
 
 ## ML — train LoRA and generate (folder `ml/`)
 
-Python runs **outside** the Node server. You need a **GPU** for practical training; Apple Silicon can run it on **MPS** but training will be slow.
+Python runs **outside** the Node server. Use a **NVIDIA GPU** for practical training. On a new PC, install the **PyTorch with CUDA** wheel first (see [Get Started](https://pytorch.org/get-started/locally/)), then `pip install -r ml/requirements.txt` inside `ml/.venv` — see `ml/README.md`.
 
 1. **Environment** (from project root):
 
@@ -51,13 +51,13 @@ Python runs **outside** the Node server. You need a **GPU** for practical traini
    accelerate config
    ```
 
-2. **Train** — downloads the official DreamBooth LoRA script on first run, flattens `public/4_Research` into `ml/data/instance_flat`, and writes weights under `ml/outputs/lora-run` (configurable in `ml/launch_train.sh`):
+2. **Train** — first run fetches the DreamBooth LoRA script into `ml/vendor/`, flattens `public/4_Research` into `ml/data/instance_flat`, and writes weights under `ml/outputs/lora-run` (override steps with `MAX_TRAIN_STEPS`):
 
    ```bash
-   ./launch_train.sh
+   ./ml/launch_train.sh
    ```
 
-   The script must see `accelerate` on your `PATH` (use the activated venv).
+   On Windows: `ml\launch_train.bat` from the repository root. The entry script runs `ml/launch_train.py`, which invokes `ml/.venv` for the actual `accelerate` + training process.
 
 3. **Generate** images with the base model plus your LoRA:
 
@@ -65,7 +65,7 @@ Python runs **outside** the Node server. You need a **GPU** for practical traini
    python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, your words here" --out-dir outputs/gen --count 2
    ```
 
-4. **Documentation pages** in the same site: `ml-train.html` and `ml-generate.html` (open via the dev server in step 1).
+4. **Documentation** in the same site: `ml-manual.html` (single guide; open via the dev server in step 1).
 
 For more detail, read `ml/README.md`.
 

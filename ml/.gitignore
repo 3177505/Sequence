@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 data/instance_flat/
 outputs/
+*.log
 vendor/
 .runs
