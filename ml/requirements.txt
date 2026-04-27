@@ -1,5 +1,6 @@
-# NVIDIA GPU: install PyTorch with CUDA first, then this file — see ml/README.md
-torch>=2.1.0,<2.5
+# NVIDIA GPU: optional — install torch+torchvision from https://pytorch.org/get-started/locally/ (CUDA) first, then: pip install -r requirements.txt
+# Pins relaxed so Python 3.12+ and Windows can resolve wheels (3.14+ may only offer torch 2.9+).
+torch>=2.1.0
 torchvision
 diffusers==0.32.2
 transformers>=4.36,<5
@@ -9,7 +10,7 @@ safetensors
 pillow
 huggingface-hub>=0.34.0,<1.0
 tensorboard
-numpy>=1.26,<2
+numpy>=1.26
 packaging
 tqdm
 requests

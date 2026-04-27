@@ -1,4 +1,4 @@
-# Sequence / ml — LoRA (DreamBooth) + SD1.5
+# Sequence / ml — LoRA (DreamBooth) + SD 1.5 / SDXL
 
 Command-line training next to the static site. **Not** used by the web server. **Python 3.10+**; use a **NVIDIA GPU** for practical training. CPU and Apple MPS are possible but training will be very slow on CPU.
 
@@ -31,12 +31,13 @@ From the **repository root** (so paths resolve the same on every OS):
 
 | Platform | Command |
 |----------|---------|
-| macOS / Linux | `./ml/launch_train.sh` (optional: `MAX_TRAIN_STEPS=400`, `RESUME=1`) |
-| Windows (cmd) | `ml\launch_train.bat` (optional: `set MAX_TRAIN_STEPS=400`, `set RESUME=1`) |
+| macOS / Linux | `./ml/launch_train.sh` (optional: `MAX_TRAIN_STEPS=2000`, `RESUME=1`) |
+| Windows (cmd) | `ml\launch_train.bat` (optional: `set MAX_TRAIN_STEPS=2000`, `set RESUME=1`) |
 | Any | `ml/.venv` Python: `python ml/launch_train.py` |
 
-- First run downloads `train_dreambooth_lora.py` (pinned diffusers tag) into `ml/vendor/`.
-- Weights: `ml/outputs/lora-run/`.
+- Per-folder Windows path: `research-folder-training.ps1` from repo root (defaults: SDXL, 2000 steps, rank 16, 1024 when using SDXL).
+- First run downloads the DreamBooth LoRA script (pinned diffusers tag) into `ml/vendor/`.
+- Weights: `ml/outputs/…` (e.g. `lora-run/` or a per-folder slug from the script).
 - `RESUME=1` (Unix) or `set RESUME=1` (Windows cmd) continues from the latest checkpoint in that folder.
 
 ## Generate
@@ -44,10 +45,10 @@ From the **repository root** (so paths resolve the same on every OS):
 With `ml/.venv` active and `cd ml`:
 
 ```bash
-python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, …" --out-dir outputs/gen --count 2
+python generate.py --base sdxl --lora outputs/lora-run --prompt "a sksseq photograph, …" --out-dir outputs/gen --count 2
 ```
 
-Omit `--lora` for base SD1.5 only.
+Omit `--lora` for base model only. Use `--base sd15` for SD 1.5. Defaults: SDXL 1024² ~32 steps CFG ~7; SD1.5 512² ~30 steps.
 
 ## Gradio (buttons)
 

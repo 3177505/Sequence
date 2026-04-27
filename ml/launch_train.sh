@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-MAX_ST="${MAX_TRAIN_STEPS:-800}"
+MAX_ST="${MAX_TRAIN_STEPS:-1500}"
 export MAX_TRAIN_STEPS="${MAX_ST}"
 echo "max_train_steps=${MAX_ST} (e.g. MAX_TRAIN_STEPS=200 $0)"
 if [[ -n "${RESUME:-}" ]]; then

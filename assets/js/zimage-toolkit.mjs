@@ -60,9 +60,10 @@ function buildCommandMap(seq, shell) {
         'python -m pip install -r requirements.txt',
       ],
       5: [
-        'cd $env:USERPROFILE\\ai-work\\ai-toolkit',
-        '.\\.venv\\Scripts\\Activate.ps1',
-        'python run.py config\\tvuj_zimage_config.yml',
+        `$env:SEQ = ${wq}`,
+        'cd $env:SEQ',
+        '.\\ostris-dataset-config.ps1 -ListTemplates',
+        '.\\ostris-dataset-config.ps1 -FolderKey 36_Motherlode -TemplateFile train_lora_flex2_24gb.yaml -Run',
       ],
     };
   }
@@ -93,7 +94,7 @@ function buildCommandMap(seq, shell) {
     5: [
       'source "$HOME/ai-work/ai-toolkit/.venv/bin/activate"',
       'cd "$HOME/ai-work/ai-toolkit"',
-      'python run.py config/tvuj_zimage_config.yml',
+      'python run.py config/sequence_ostris.yml',
     ],
   };
 }

@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0\.."
-if not defined MAX_TRAIN_STEPS set MAX_TRAIN_STEPS=800
+if not defined MAX_TRAIN_STEPS set MAX_TRAIN_STEPS=1500
 set TOKENIZERS_PARALLELISM=false
 if not exist "ml\.venv\Scripts\python.exe" (
   echo Missing ml\.venv — create it and install requirements. See ml\README.md
