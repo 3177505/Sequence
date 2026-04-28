@@ -178,7 +178,7 @@ if (-not (Test-Path -LiteralPath $srcPath -PathType Container)) {
 }
 
 $loraOut = "ml\outputs\$loraDirName"
-$genOut = "outputs\gen-$loraDirName"
+$genRel = Join-Path "outputs" "gen-$loraDirName"
 
 Set-Location $RepoRoot
 
@@ -205,8 +205,8 @@ if ($SkipGenerate) { exit 0 }
 $mlPython = Join-Path $RepoRoot 'ml\.venv\Scripts\python.exe'
 $genPy = Join-Path $RepoRoot 'ml\generate.py'
 $loraPath = Join-Path $RepoRoot "ml\outputs\$loraDirName"
-$outPath = Join-Path $RepoRoot "ml\$genOut"
-Write-Host "Generate: $genOut" -ForegroundColor Cyan
+$outPath = Join-Path $RepoRoot $genRel
+Write-Host "Generate: $genRel" -ForegroundColor Cyan
 $ga = @(
     '--base', $Base, '--lora', $loraPath, '--prompt', $p.G, '--out-dir', $outPath, '--count', "$GenCount",
     '--steps', "$GenSteps", '--guidance', "$GenGuidance"
@@ -214,4 +214,4 @@ $ga = @(
 if ($null -ne $GenNegative -and $GenNegative -ne '') { $ga += @('--negative', $GenNegative) }
 & $mlPython $genPy @ga
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Write-Host "Done. LoRA: ml\outputs\$loraDirName  |  images: ml\$genOut"  -ForegroundColor Green
+Write-Host "Done. LoRA: ml\outputs\$loraDirName  |  images: $genRel"  -ForegroundColor Green

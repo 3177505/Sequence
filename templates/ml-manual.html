@@ -31,7 +31,7 @@
       Výsledek ukládáme do <code>ml/outputs/lora-run</code>.
     </p>
     <p>
-      <strong>Generování</strong> pak znamená: spustíš skript <code>ml/generate.py</code>, zadáš prompt, volitelně načteš LoRA, a dostaneš PNG do <code>ml/outputs/gen/</code>.
+      <strong>Generování</strong>: při <code>research-folder-training.ps1</code> jdou PNG do <code>outputs/gen-lora-…</code> v kořeni Sequence; ručně voláš <code>ml/generate.py</code> s <code>--out-dir</code> (např. <code>outputs/gen</code> z kořene).
     </p>
   </section>
 
@@ -57,7 +57,7 @@
         <h3>Z-Image + Ostris</h3>
         <p>
           Chceš-li <strong>konkrétně Z-Image</strong> a ekosystém <a href="https://github.com/ostris/ai-toolkit" rel="noopener">ai-toolkit</a>, jde o <strong>samostatný setup</strong> mimo jednoduchý jeden-sloupec <code>ml/</code>.
-          V repu máme jen pomocnou stránku <a href="zimage-toolkit.html">Z-Image (Ostris)</a> (cesty, export z <code>4_Research</code>, doplnění <code>.txt</code> k obrázkům).
+          V repu máme stránku <a href="zimage-toolkit.html">ML toolkit</a> (SD LoRA z <code>4_Research</code>, volitelně Z-Image / Ostris a <code>.txt</code> k obrázkům).
           Není to „špatně“ — je to <strong>jiný nástroj a jiný model</strong>, ne náhrada téže příručky řádek po řádku.
         </p>
       </div>
@@ -101,7 +101,7 @@
       Při startu tréninku se z nich automaticky vytvoří <strong>plochá</strong> kopie v <code>ml/data/instance_flat</code> (skript <code>ml/collect_instance_images.py</code>), protože DreamBooth krok očekává jednu složku se soubory.
     </p>
     <p>
-      Společný text pro všechny snímky je v logice tréninku jako <strong>jeden instance prompt</strong> (v <code>ml/launch_train.py</code>); pokud bys chtěl u každého obrázku vlastní popisek, řeší se to samostatnými <code>.txt</code> soubory — např. při cestě k Z-Image má smysl <code>ml/zimage_sidecar_captions.py</code> a stránka <a href="zimage-toolkit.html">Z-Image (Ostris)</a>.
+      Společný text pro všechny snímky je v logice tréninku jako <strong>jeden instance prompt</strong> (v <code>ml/launch_train.py</code>); pokud bys chtěl u každého obrázku vlastní popisek, řeší se to samostatnými <code>.txt</code> soubory — např. u větve Z-Image / Ostris <code>ml/zimage_sidecar_captions.py</code> a stránka <a href="zimage-toolkit.html">ML toolkit</a>.
     </p>
   </section>
 
@@ -150,7 +150,7 @@ python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, resear
       </div>
     </div>
     <p>
-      Výstupní soubory jsou typicky <code>out_00.png</code>, <code>out_01.png</code> v <code>ml/outputs/gen/</code>. Prompt piš anglicky; „sksseq“ je v našem tokenu součást věty z tréninku — drž ho konzistentní s tím, co jsi používal u učení.
+      Výstupní soubory jsou typicky <code>out_00.png</code>, <code>out_01.png</code> v <code>outputs/gen-lora-…</code> po <code>research-folder-training.ps1</code>, případně v libovolné složce zadané jako <code>--out-dir</code> u <code>generate.py</code>. Prompt piš anglicky; „sksseq“ drž konzistentní s tréninkem.
     </p>
   </section>
 
@@ -163,7 +163,7 @@ python generate.py --lora outputs/lora-run --prompt "a sksseq photograph, resear
       <strong>Gradio</strong> (<code>ml-gui/app.py</code>) otevírá druhé okno s tréninkem a náhledem generování — stále stejné <code>ml/.venv</code>, popis v <code>ml-gui/README.md</code>. Dva tréninky současně nespouštěj.
     </p>
     <p>
-      Textové soubory: <code>ml/README.md</code>, <code>RUN.md</code>. Stránka <a href="zimage-toolkit.html">Z-Image (Ostris)</a> až budeš řešit druhou větev modelu.
+      Textové soubory: <code>ml/README.md</code>, <code>RUN.md</code>. Stránka <a href="zimage-toolkit.html">ML toolkit</a> pro průvodce z <code>4_Research</code> a volitelný Ostris.
     </p>
   </section>
 

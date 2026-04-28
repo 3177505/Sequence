@@ -1,5 +1,9 @@
 const LS_KEY = 'ztk-sequence-path';
 const LS_SHELL = 'ztk-shell';
+const LS_TRACK = 'ztk-track';
+
+const LABELS_SD = ['1 · Data', '2 · Venv', '3 · Train', '4 · Outputs', '5 · Extra'];
+const LABELS_OSTRIS = ['1 · Data', '2 · Export', '3 · Popisky', '4 · Ostris', '5 · Běh'];
 
 function defaultShell() {
   if (typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent)) return 'win';
@@ -14,6 +18,16 @@ function getShell() {
 
 function setShellPref(shell) {
   if (shell === 'win' || shell === 'unix') localStorage.setItem(LS_SHELL, shell);
+}
+
+function getTrack() {
+  const t = localStorage.getItem(LS_TRACK);
+  if (t === 'ostris') return 'ostris';
+  return 'sd';
+}
+
+function setTrackPref(t) {
+  if (t === 'sd' || t === 'ostris') localStorage.setItem(LS_TRACK, t);
 }
 
 function seqPath() {
@@ -31,7 +45,7 @@ function psSingleQuoted(s) {
   return "'" + String(s).replace(/'/g, "''") + "'";
 }
 
-function buildCommandMap(seq, shell) {
+function buildOstrisMap(seq, shell) {
   const eq = bashSingleQuoted(seq);
   const wq = psSingleQuoted(seq);
   if (shell === 'win') {
@@ -63,7 +77,7 @@ function buildCommandMap(seq, shell) {
         `$env:SEQ = ${wq}`,
         'cd $env:SEQ',
         '.\\ostris-dataset-config.ps1 -ListTemplates',
-        '.\\ostris-dataset-config.ps1 -FolderKey 36_Motherlode -TemplateFile train_lora_flex2_24gb.yaml -Run',
+        '.\\ostris-dataset-config.ps1 -FolderKey 36_Motherlode -TemplateFile train_lora_flex2_24gb_no_controls.yaml -Run',
       ],
     };
   }
@@ -99,15 +113,80 @@ function buildCommandMap(seq, shell) {
   };
 }
 
-function labelForCmd(line) {
-  const max = 88;
-  if (line.length <= max) return line;
-  return line.slice(0, max - 1) + '…';
+function buildSdMap(seq, shell) {
+  const eq = bashSingleQuoted(seq);
+  const wq = psSingleQuoted(seq);
+  if (shell === 'win') {
+    return {
+      1: null,
+      2: [
+        `$env:SEQ = ${wq}`,
+        'cd $env:SEQ\\ml',
+        'python -m venv .venv',
+        '.\\.venv\\Scripts\\Activate.ps1',
+        'python -m pip install --upgrade pip',
+        'python -m pip install -r requirements.txt',
+      ],
+      3: [
+        `$env:SEQ = ${wq}`,
+        'cd $env:SEQ',
+        '.\\research-folder-training.ps1',
+        '.\\research-folder-training.ps1 -FolderKey 36_Motherlode',
+      ],
+      4: [
+        `$env:SEQ = ${wq}`,
+        'Invoke-Item (Join-Path $env:SEQ "outputs")',
+        'Invoke-Item (Join-Path $env:SEQ "ml\\outputs")',
+      ],
+      5: [
+        `$env:SEQ = ${wq}`,
+        'cd $env:SEQ',
+        '.\\research-folder-training.ps1 -List',
+        '.\\research-folder-training.ps1 -FolderKey 7_assemblage -SkipGenerate',
+        '.\\research-folder-training.ps1 -Base sd15 -MaxTrainSteps 800 -Resolution 512',
+      ],
+    };
+  }
+  return {
+    1: null,
+    2: [
+      `export SEQ=${eq}`,
+      'cd "$SEQ/ml"',
+      'python3 -m venv .venv',
+      'source .venv/bin/activate',
+      'python -m pip install --upgrade pip',
+      'python -m pip install -r requirements.txt',
+    ],
+    3: [
+      `export SEQ=${eq}`,
+      'cd "$SEQ"',
+      '# Nastav stejné proměnné jako v ml/research-folder-training.ps1 (SEQUENCE_COLLECT_SRC, INSTANCE_PROMPT, SEQUENCE_LORA_OUT, SEQUENCE_BASE_MODEL, MAX_TRAIN_STEPS, …), pak:',
+      'chmod +x ml/launch_train.sh',
+      './ml/launch_train.sh',
+      '# Generování: python ml/generate.py --base sdxl --lora ml/outputs/DIR --prompt "…" --out-dir outputs/gen-DIR --count 8',
+    ],
+    4: [
+      `export SEQ=${eq}`,
+      'xdg-open "$SEQ/outputs" 2>/dev/null || open "$SEQ/outputs"',
+      'xdg-open "$SEQ/ml/outputs" 2>/dev/null || open "$SEQ/ml/outputs"',
+    ],
+    5: [
+      `export SEQ=${eq}`,
+      'cd "$SEQ"',
+      '# Linux/macOS: použij parametry z research-folder-training.ps1 jako exporty před launch_train.sh; nebo spouštěj z Windows přes PS1.',
+    ],
+  };
 }
 
-function renderLineButtons(root, map) {
-  root.querySelectorAll('[data-ztk-lines-for]').forEach((host) => {
-    const k = host.getAttribute('data-ztk-lines-for');
+function renderSnippets(root, map) {
+  const track = getTrack();
+  root.querySelectorAll('[data-ztk-lines-step]').forEach((host) => {
+    const tr = host.getAttribute('data-ztk-lines-track');
+    if (tr !== track) {
+      host.replaceChildren();
+      return;
+    }
+    const k = host.getAttribute('data-ztk-lines-step');
     const lines = map[k];
     host.replaceChildren();
     if (!lines || !lines.length) {
@@ -115,29 +194,50 @@ function renderLineButtons(root, map) {
       return;
     }
     host.hidden = false;
-    lines.forEach((line) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'ztk__copy';
-      b.textContent = labelForCmd(line);
-      b.title = line;
-      b.addEventListener('click', () => copyText(line));
-      host.appendChild(b);
-    });
+    const pre = document.createElement('pre');
+    pre.className = 'ztk__code ztk__code--snippet';
+    const code = document.createElement('code');
+    code.textContent = lines.join('\n');
+    pre.appendChild(code);
+    host.appendChild(pre);
   });
 }
 
 function refreshUi(root) {
   if (!localStorage.getItem(LS_SHELL)) setShellPref(defaultShell());
+  if (!localStorage.getItem(LS_TRACK)) setTrackPref('sd');
   const shell = getShell();
+  const track = getTrack();
+
+  document.querySelectorAll('[data-ztk-track]').forEach((b) => {
+    const on = b.getAttribute('data-ztk-track') === track;
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
   document.querySelectorAll('[data-ztk-shell]').forEach((b) => {
     const on = b.getAttribute('data-ztk-shell') === shell;
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
+
+  const labels = track === 'ostris' ? LABELS_OSTRIS : LABELS_SD;
+  document.querySelectorAll('[data-ztk-step]').forEach((b) => {
+    const id = b.getAttribute('data-ztk-step');
+    const idx = parseInt(id, 10) - 1;
+    if (idx >= 0 && idx < labels.length) b.textContent = labels[idx];
+  });
+
+  root.querySelectorAll('[data-ztk-content]').forEach((el) => {
+    const c = el.getAttribute('data-ztk-content');
+    el.toggleAttribute('hidden', c !== track);
+  });
+
+  const seq = seqPath();
   const ex = document.getElementById('ztk-p1-ex');
-  if (ex) ex.textContent = `${seqPath()}/public/4_Research/12_Scapegoat`;
-  const map = buildCommandMap(seqPath(), shell);
-  renderLineButtons(root, map);
+  const exSd = document.getElementById('ztk-p1-ex-sd');
+  if (ex) ex.textContent = `${seq}/public/4_Research/12_Scapegoat`;
+  if (exSd) exSd.textContent = `${seq}/public/4_Research/24_LaughingStock`;
+
+  const map = track === 'ostris' ? buildOstrisMap(seq, shell) : buildSdMap(seq, shell);
+  renderSnippets(root, map);
   root._ztkCmdMap = map;
 }
 
@@ -173,11 +273,20 @@ function init() {
       refreshUi(root);
     });
   }
+  document.querySelectorAll('[data-ztk-track]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const t = b.getAttribute('data-ztk-track');
+      if (t === 'sd' || t === 'ostris') {
+        setTrackPref(t);
+        refreshUi(root);
+      }
+    });
+  });
   document.querySelectorAll('[data-ztk-shell]').forEach((b) => {
     b.addEventListener('click', () => {
-      const shell = b.getAttribute('data-ztk-shell');
-      if (shell === 'win' || shell === 'unix') {
-        setShellPref(shell);
+      const sh = b.getAttribute('data-ztk-shell');
+      if (sh === 'win' || sh === 'unix') {
+        setShellPref(sh);
         refreshUi(root);
       }
     });

@@ -3,17 +3,18 @@
 #
 #   cd ...\Sequence
 #   .\ostris-dataset-config.ps1 -FolderKey 12_Scapegoat
-#   .\ostris-dataset-config.ps1 -FolderKey 36_Motherlode -TemplateFile train_lora_flex2_24gb.yaml
+#   .\ostris-dataset-config.ps1 -FolderKey 36_Motherlode -TemplateFile train_lora_flex2_24gb_no_controls.yaml
 #   .\ostris-dataset-config.ps1 -Run
 #
-# -TemplateFile must exist under ai-toolkit\config\examples\. Use -ListTemplates to see names (Z-Image, etc.).
+# Default template is bundled under ml/ostris-templates/ (Flex2 without auto controls — no onnx/dwpose).
+# Other templates: ai-toolkit\config\examples\. Use -ListTemplates for that folder.
 
 [CmdletBinding()]
 param(
     [string] $FolderKey,
     [string] $DatasetPath,
     [string] $AiToolkitRoot = (Join-Path $env:USERPROFILE 'ai-work\ai-toolkit'),
-    [string] $TemplateFile = 'train_lora_flex2_24gb.yaml',
+    [string] $TemplateFile = 'train_lora_flex2_24gb_no_controls.yaml',
     [string] $OutName = 'sequence_ostris.yml',
     [switch] $ListTemplates,
     [switch] $Run
@@ -21,14 +22,22 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $ZimageImagesRoot = Join-Path $env:USERPROFILE 'ai-work\zimage_from_research\images'
+$BundledTemplates = Join-Path $PSScriptRoot 'ostris-templates'
 
 if ($ListTemplates) {
     $ex = Join-Path $AiToolkitRoot 'config\examples'
     if (-not (Test-Path -LiteralPath $ex -PathType Container)) {
         Write-Error "Not found: $ex  (clone ai-toolkit first)"
     }
+    Write-Host "ai-toolkit config\examples:" -ForegroundColor Cyan
     Get-ChildItem -LiteralPath $ex -Filter '*.yml' -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
     Get-ChildItem -LiteralPath $ex -Filter '*.yaml' -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
+    if (Test-Path -LiteralPath $BundledTemplates -PathType Container) {
+        Write-Host ""
+        Write-Host "Sequence ml\ostris-templates (use as -TemplateFile name):" -ForegroundColor Cyan
+        Get-ChildItem -LiteralPath $BundledTemplates -Filter '*.yaml' -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
+        Get-ChildItem -LiteralPath $BundledTemplates -Filter '*.yml' -File -ErrorAction SilentlyContinue | ForEach-Object { $_.Name }
+    }
     exit 0
 }
 
@@ -56,9 +65,19 @@ if ($Run -and -not $FolderKey -and -not $DatasetPath) {
     }
 }
 
-$templatePath = Join-Path $AiToolkitRoot "config\examples\$TemplateFile"
+$templatePath = $null
+if ([System.IO.Path]::IsPathRooted($TemplateFile) -and (Test-Path -LiteralPath $TemplateFile -PathType Leaf)) {
+    $templatePath = $TemplateFile
+} else {
+    $bundledTry = Join-Path $BundledTemplates $TemplateFile
+    if (Test-Path -LiteralPath $bundledTry -PathType Leaf) {
+        $templatePath = $bundledTry
+    } else {
+        $templatePath = Join-Path $AiToolkitRoot "config\examples\$TemplateFile"
+    }
+}
 if (-not (Test-Path -LiteralPath $templatePath -PathType Leaf)) {
-    Write-Error (('Template not found: {0}. Run with -ListTemplates, then -TemplateFile (file name from that list).' -f $templatePath))
+    Write-Error (('Template not found: {0}. Use -ListTemplates, bundled name from ml\ostris-templates, or full path.' -f $templatePath))
 }
 
 if ($DatasetPath) {
