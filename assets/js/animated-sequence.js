@@ -1,6 +1,7 @@
 const SLIDE_MS = 5800;
 const TRIGGER_SLIDE_MS = 400;
 const TRIGGER_MS = 15000;
+const RESEARCH_STATIC = '/public/api-public-tree/research-images.json';
 const RESEARCH_API = '/api/research-images';
 
 const WIPE_MS_BASELINE = 420;
@@ -488,7 +489,8 @@ async function readSerialLines(port) {
 }
 
 async function loadResearchPayload() {
-  const res = await fetch(RESEARCH_API, { cache: 'no-store' });
+  let res = await fetch(RESEARCH_STATIC, { cache: 'no-store' });
+  if (!res.ok) res = await fetch(RESEARCH_API, { cache: 'no-store' });
   if (!res.ok) throw new Error(`${RESEARCH_API} ${res.status} (spusťte npm run dev)`);
   return res.json();
 }

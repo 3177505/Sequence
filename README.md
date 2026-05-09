@@ -2,6 +2,8 @@
 
 Dual-screen kiosk prototype: one page, two columns. Each column plays its own randomized sequence (colors for now; videos later). A **trigger** switches both columns to a second pair of sequences for **15 seconds** (faster cadence in the current build).
 
+**Setup checklist (Pi imaging, SSH / Connect, Netlify, dual HDMI):** see [`SETUP.md`](SETUP.md).
+
 ---
 
 ## Run locally
@@ -17,6 +19,20 @@ Open [http://localhost:3000](http://localhost:3000). HTML links to `assets/scss/
 |--------|---------|
 | `npm run dev` | Dev server on port 3000, on-the-fly SCSS |
 | `npm run dev:serve` | Plain static server (`serve`) — use `npm run dev` if you need SCSS |
+| `npm run build` | Production folder `dist/` (compiled CSS, copied assets, generated JSON under `public/` then copied) |
+| `npm run build:public-tree` | Refresh `public/api-public-tree/*.json` tree payloads |
+| `npm run build:api-json` | Refresh `research-images.json` and `data-videos.json` for static hosting |
+| `npm run scrape:reddit-videos` | Writes `assets/data/reddit-videos.json` (also attempted during `npm run build`) |
+
+---
+
+## Host on Netlify (Git deploy)
+
+Connect the repo at [Netlify](https://www.netlify.com/) and use the checked-in [`netlify.toml`](netlify.toml): build command `npm ci && npm run build`, publish directory **`dist`**.
+
+Each deploy regenerates folder-tree JSON, research/video API snapshots, attempts a Reddit scrape (falls back to committed `assets/data/reddit-videos.json` if Reddit fails), compiles SCSS to CSS, and copies `public/` (large media stays in Git → clone size and deploy minutes grow with assets).
+
+Point the Raspberry Pi Chromium kiosk at your site URL (for example `/reddit-sequence.html` or `/data-videos.html`). **ML dashboard** routes still need the Node dev server (`/api/ml`); they are not wired for static hosting.
 
 ---
 

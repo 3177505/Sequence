@@ -1,6 +1,7 @@
 const SLIDE_MS = 2500;
 const TRIGGER_SLIDE_MS = 400;
 const TRIGGER_MS = 15000;
+const DATA_VIDEOS_STATIC = '/public/api-public-tree/data-videos.json';
 const DATA_VIDEOS_API = '/api/data-videos';
 const REDDIT_VIDEOS_API = '/api/reddit-videos';
 const REDDIT_VIDEOS_FALLBACK = 'assets/data/reddit-videos.json';
@@ -365,7 +366,8 @@ async function init() {
   if (!statusEl) return;
   statusEl.textContent = 'Načítání: vlevo local _Video, vpravo Reddit (ObscureMedia)…';
 
-  const dataRes = await fetch(DATA_VIDEOS_API, { cache: 'no-store' });
+  let dataRes = await fetch(DATA_VIDEOS_STATIC, { cache: 'no-store' });
+  if (!dataRes.ok) dataRes = await fetch(DATA_VIDEOS_API, { cache: 'no-store' });
   if (!dataRes.ok) throw new Error(`${DATA_VIDEOS_API} nedostupné`);
   const dataJson = await dataRes.json();
   const all = Array.isArray(dataJson.all) ? dataJson.all : [];

@@ -305,7 +305,8 @@
 
   const load = async () => {
     setStatus('Načítám…');
-    const r = await fetch(endpoint, { cache: 'no-store' });
+    let r = await fetch('/public/api-public-tree/concept.json', { cache: 'no-store' });
+    if (!r.ok) r = await fetch(endpoint, { cache: 'no-store' });
     if (!r.ok) throw new Error(`${endpoint}: ${r.status}`);
     const data = await r.json();
     lastLoadedDoc = normalizeDoc(data);
